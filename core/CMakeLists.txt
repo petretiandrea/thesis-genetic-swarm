@@ -6,6 +6,7 @@ add_library(core SHARED
         configuration/ConfigurationJson.h
         configuration/ArgosExperiment.h
         configuration/config.h
-        Logger.h configuration/ArgosExperiment.cpp configuration/ConfigurationJson.cpp)
+        configuration/ArgosExperiment.cpp
+        configuration/ConfigurationJson.cpp)
 
 

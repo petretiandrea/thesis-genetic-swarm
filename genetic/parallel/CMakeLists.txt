@@ -4,7 +4,9 @@ add_executable(
         swarm_evolve_parallel
         main.cpp
         ParallelEvalutator.h
-        BNGenomeSharedMemory.h MasterSlave.h MasterSlave.cpp ParallelEvaluator.cpp)
+        BNGenomeSharedMemory.h
+        MasterSlave.h
+        ParallelEvaluator.cpp)
 
 target_link_libraries(swarm_evolve_parallel
         rt pthread

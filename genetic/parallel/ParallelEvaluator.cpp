@@ -22,7 +22,7 @@ ParallelEvaluator::ParallelEvaluator(const config::ExperimentConfiguration& conf
                                      const char* argosExperimentFilename,
                                      int parallelism) :
     xmlExperiment(config::load_experiment_config(argosExperimentFilename, configuration)),
-    memory(configuration.genetic_config.population_size, parallelism),
+    memory(configuration.genetic_config.population_size, configuration.genetic_config.genome_size, parallelism),
     workers(memory, parallelism),
     parallelism(parallelism) {
 
@@ -53,6 +53,7 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
             short genomeArray[boolGenome.size()];
             genomeToShortArray(boolGenome, genomeArray);
             //TODO: check if is already evaluated
+            //cout << "Sending " << boolGenome << endl;
             this->memory.putGenome(memoryIndex, genomeArray, boolGenome.size(), actualScore, -1);
             memoryIndex++;
             needEvaluation.push_back(i);
@@ -130,6 +131,7 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
         LOG << " Slave " << slaveId << " pid: " << ::getpid() << " slice " << from << " to " << (from + size) << " size: " << size << endl;
 
         for(int i = from; i < from + size; i++) {
+            cout << "Slice " << i << endl;
             auto& shared = memory.getGenome(i);
 
             //cout << i << " " << shared.genome << endl;
@@ -147,8 +149,10 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
 
            bool needEvaluation = shared.fitness == -1;
            if(needEvaluation) {
+               //cout << "Testing " << genome << endl;
                auto performance = bngenome::evaluator(experiment)(genome);
                //auto robotCount = ((bngenome::CustomEvalData*) genome.evalData())->robotCount;
+               //cout << "Perf: " << performance << endl;
                memory.updateGenomeEvaluation(i, performance, 0);
            }
        }
