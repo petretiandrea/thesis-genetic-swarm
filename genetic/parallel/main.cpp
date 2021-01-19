@@ -8,12 +8,12 @@
 #include <galib-wrapper/GeneticBuilder.h>
 #include <genetic/core/BNGenome.h>
 #include "ParallelEvalutator.h"
-
-void saveIntoLog(const GAPopulation* population);
+#include <genetic/core/PerformanceLogger.h>
 
 int main() {
 
     auto userConfig = config::create_from_file("default.json");
+    auto logger = PerformanceLogger("statistics/", "task1_" + PerformanceLogger::statisticsBasenameFromConfiguration(userConfig));
 
     ParallelEvaluator parallel(userConfig, "test.argos", 2);
 
@@ -41,25 +41,6 @@ int main() {
              << " Best fitness " << result.population->best().fitness()
              << endl;
 
-        saveIntoLog(result.population);
-    }
-}
-
-
-void saveIntoLog(const GAPopulation* population) {
-    static double best_score = 0;
-    static GAGenome* best_genome = nullptr;
-
-    cout << "Saving population info " << endl;
-    for(int i = 0; i < population->size(); i++) {
-        auto& individual = population->individual(i);
-
-        cout << "Genome " << individual << endl;
-        if(individual.score() > best_score) {
-            best_genome = &individual;
-            best_score = best_genome->score();
-            cout << "Best score: " << best_score << " booleans: " << *best_genome << endl;
-            //logger.saveGenomeAsBest(*best_genome);
-        }
+        logger.saveStatistics(*result.population);
     }
 }

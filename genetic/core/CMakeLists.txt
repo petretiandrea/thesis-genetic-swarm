@@ -1,10 +1,10 @@
 
-add_library(genetic_core STATIC
+add_library(genetic_core SHARED
         BNGenome.h
         BNGenome.cpp
         GenomeEvalData.h
         GenomeEvalData.cpp
-        GeneticEvaluator.h)
+        GeneticEvaluator.h PerformanceLogger.h PerformanceLogger.cpp)
 
 target_link_libraries(
         genetic_core
