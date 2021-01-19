@@ -1,19 +1,8 @@
 #include <iostream>
 
-#include <utility>
-#include <vector>
 #include <argos3/core/simulator/simulator.h>
 #include <core/configuration/ArgosExperiment.h>
-#include <core/configuration/ConfigurationJson.h>
 #include <genetic/core/BNGenome.h>
-
-#include <genetic/core/BNGenome.h>
-#include <loop_function/evolution/evolution_loop.h>
-#include <utility/Utility.h>
-
-#include <ga/ga.h>
-#include <genetic/core/GeneticEvaluator.h>
-#include <core/configuration/ExperimentConfiguration.h>
 #include <galib-wrapper/GeneticBuilder.h>
 
 using namespace std;
@@ -29,6 +18,8 @@ int main(){
     config::load_experiment_config(simulator, "test.argos", userConfig);
 
     auto experiment = bngenome::create_context(userConfig.genetic_config, simulator);
+
+    experiment.loop.GenerateRandomSpawnLocation(userConfig.genetic_config.n_trials);
 
     GA1DBinaryStringGenome genome(userConfig.genetic_config.genome_size);
     GeneticBuilder<GA1DBinaryStringGenome> evaluator(

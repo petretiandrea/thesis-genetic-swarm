@@ -5,11 +5,12 @@
 #ifndef SWARM_GEN_JSONPRETTIFY_H
 #define SWARM_GEN_JSONPRETTIFY_H
 
+#include <string>
 #include <boost/json.hpp>
 
 namespace boost {
     namespace json {
-        void pretty_print( std::ostream& os, boost::json::value const& jv, std::string* indent = nullptr)
+        inline void pretty_print( std::ostream& os, boost::json::value const& jv, std::string* indent = nullptr)
         {
             namespace json = boost::json;
             std::string indent_;

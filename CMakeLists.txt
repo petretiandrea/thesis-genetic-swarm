@@ -6,13 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 # Set the path where CMake will find additional scripts
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-set(BOOST_ROOT_DIR /home/local/lib/)
-set(BOOST_REQUESTED_VERSION 1.75.0)
-
-find_package(Boost COMPONENTS date_time json)
+find_package(Boost 1.75.0 COMPONENTS date_time json)
 if(BOOST_FOUND)
-    include_directories(${BOOST_INCLUDE_DIRS})
-    link_directories(${BOOST_LIBRARIES})
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARIES})
 endif()
 
 # Find the ARGoS package

@@ -5,30 +5,37 @@
 #ifndef SWARM_GEN_PARALLELEVALUTATOR_H
 #define SWARM_GEN_PARALLELEVALUTATOR_H
 
-#include <vector>
-#include <core/configuration/ExperimentConfiguration.h>
 #include "MasterSlave.h"
 #include "BNGenomeSharedMemory.h"
+#include <vector>
+#include <core/configuration/ExperimentConfiguration.h>
+#include <core/configuration/ArgosExperiment.h>
 #include <ga/ga.h>
-/*
+
 using namespace std;
-
-
 
 class ParallelEvaluator {
 
 public:
-    static ParallelEvaluator fromConfiguration(config::GeneticConfiguration configuration, int parallelism) {
+    ParallelEvaluator(const config::ExperimentConfiguration& configuration,
+                      const char* argosExperimentFilename,
+                      int parallelism);
 
-    }
-
-    explicit ParallelEvaluator(int parallelism);
-
-private:
-    void slaveBehaviour(int slaveId, const config::GeneticConfiguration& configuration);
+    std::function<void(GAPopulation&)> populationEvaluator();
 
 private:
+    void evaluatePopulation(GAPopulation& population);
+    [[noreturn]] void slaveBehaviour(int slaveId,
+                                     const config::GeneticConfiguration &configuration,
+                                     ticpp::Document& experimentXML);
+
+private:
+    int parallelism;
+    BNGenomeSharedMemory memory;
     MasterSlave<BNGenomeSharedMemory> workers;
+    ticpp::Document xmlExperiment;
+
+    void prepareTaskSlave(int genomeCount);
 };
-*/
+
 #endif //SWARM_GEN_PARALLELEVALUTATOR_H

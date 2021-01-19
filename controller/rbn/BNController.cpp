@@ -42,7 +42,7 @@ void BNController::Init(TConfigurationNode &t_node) {
                 constants::RANDOM_SEED);
     }
 }
-
+#include <utility/Utility.h>
 void BNController::ControlStep() {
     auto proximityValues = footboot::readProximityValues(*proximity, 8);
     auto groundValues = footboot::readMotorGroundValues(*motorGround);

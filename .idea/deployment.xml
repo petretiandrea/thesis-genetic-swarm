@@ -2,15 +2,43 @@
 <project version="4">
   <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="Docker Env (6ae214c7-8577-4e03-b70a-2b715da5840a)">
+      <paths name="Remote GDB Server (2a824820-a1e9-4b0d-bd53-2b37b98ca7ba)">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/argos/swarm-gen" local="$PROJECT_DIR$" />
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Remote Host (c062144e-76e4-4e01-afdb-cd70f6b4af0a)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="WSL (9687ebdb-9eb6-4b25-a666-3fb941cf11f4)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="lab (011bcd6e-6f22-4fe6-ac50-ed28c7972377)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="robotics (c1480feb-bed9-4579-8b8b-b8deaf461a20)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/andrea/swarm-gen-new" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/build" />
-            <excludedPath local="true" path="$PROJECT_DIR$/build" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/build" />
           </excludedPaths>
         </serverdata>
       </paths>

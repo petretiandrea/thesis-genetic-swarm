@@ -6,6 +6,6 @@ add_library(core SHARED
         configuration/ConfigurationJson.h
         configuration/ArgosExperiment.h
         configuration/config.h
-        Logger.h)
+        Logger.h configuration/ArgosExperiment.cpp configuration/ConfigurationJson.cpp)
 
-#target_link_directories()
+

@@ -9,7 +9,9 @@
 #include <ga/GAGenome.h>
 #include <functional>
 #include <type_traits>
+#include <utility>
 #include "GeneticIterator.h"
+#include <boost/optional.hpp>
 
 using namespace std;
 
@@ -47,7 +49,7 @@ private:
     G& genomeTemplate;
     GenomeInitializer<G> initializer;
     GenomeEvaluator<G> genomeEvaluator;
-    PopulationEvaluator* populationEval = nullptr;
+    boost::optional<PopulationEvaluator*> populationEval;
     int currentSeed = GeneticBuilder::DEFAULT_SEED;
 
 private:
@@ -69,7 +71,8 @@ GeneticBuilder<G>::GeneticBuilder(G &genome,
                           genomeTemplate(genome),
                           algorithm(nullptr),
                           initializer(genomeInitializer),
-                          genomeEvaluator(genomeEvaluator) {
+                          genomeEvaluator(genomeEvaluator),
+                          populationEval() {
 
         genomeTemplate.userData(this);
         genomeTemplate.initializer(genome_initializer);
@@ -120,9 +123,9 @@ GeneticBuilder<G> &GeneticBuilder<G>::minimize() {
 template<typename G>
 GeneticBuilder<G> &GeneticBuilder<G>::populationEvaluator(PopulationEvaluator f) {
     populationEval = &f;
-   /* populationEval = &f;
-    population.evaluator(population_evaluator);
-    algorithm.population(population);*/
+    auto& currentPop = const_cast<GAPopulation&>(algorithm->population());
+    currentPop.evaluator(population_evaluator);
+    currentPop.userData(this);
     return *this;
 }
 
@@ -133,8 +136,8 @@ double GeneticBuilder<G>::evaluateGenome(G &genome) {
 
 template<typename G>
 void GeneticBuilder<G>::evaluatePopulation(GAPopulation &population) {
-    if (populationEval != nullptr) {
-        (*populationEval)(population);
+    if(populationEval.has_value()) {
+        populationEval.value()->operator()(population);
     }
 }
 
@@ -167,8 +170,7 @@ template<typename G>
 float GeneticBuilder<G>::genome_evaluator(GAGenome &genome) {
     auto* self = static_cast<GeneticBuilder<G>*>(genome.userData());
     auto& genomeTemp = dynamic_cast<G&>(genome);
-    auto a = self->template evaluateGenome(genomeTemp);
-    return (float) a;
+    return self->template evaluateGenome(genomeTemp);
 }
 
 template<typename G>

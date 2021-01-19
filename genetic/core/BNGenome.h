@@ -17,12 +17,12 @@ using namespace std;
 namespace bngenome {
 
     struct GeneticExperimentContext {
-        config::GeneticConfiguration& configuration;
+        const config::GeneticConfiguration& configuration;
         argos::CSimulator& simulator;
         EvolutionLoop& loop;
     };
 
-    inline GeneticExperimentContext create_context(config::GeneticConfiguration& config, argos::CSimulator& simulator) {
+    inline GeneticExperimentContext create_context(const config::GeneticConfiguration& config, argos::CSimulator& simulator) {
         return {
             .configuration = config,
             .simulator = simulator,

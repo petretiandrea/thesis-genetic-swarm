@@ -8,6 +8,7 @@ add_executable(
 
 target_link_libraries(swarm_evolve_parallel
         rt pthread
+        galib_wrapper
         utility
         evolution_loop
         genetic_core
