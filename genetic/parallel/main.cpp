@@ -12,10 +12,11 @@
 
 int main() {
 
-    auto userConfig = config::create_from_file("default.json");
-    auto logger = PerformanceLogger("statistics/", "task1_" + PerformanceLogger::statisticsBasenameFromConfiguration(userConfig));
+    auto userConfig = config::create_from_file("experiments/task1.json");
+    auto logger = PerformanceLogger("statistics/",
+                                    "task1_" + PerformanceLogger::statisticsBasenameFromConfiguration(userConfig));
 
-    ParallelEvaluator parallel(userConfig, "test.argos", 2);
+    ParallelEvaluator parallel(userConfig, "experiments/task1.argos", 10);
 
     rnd::Random rnd(123);
     GA1DBinaryStringGenome genome(userConfig.genetic_config.genome_size);
@@ -38,7 +39,7 @@ int main() {
     cout << "Starting generations..." << endl;
     for(auto& result : iterator) {
         cout << "Done generation " << result.generation
-             << " Best fitness " << result.population->best().fitness()
+             << " Best fitness " << result.population->best().score()
              << endl;
 
         logger.saveStatistics(*result.population);
