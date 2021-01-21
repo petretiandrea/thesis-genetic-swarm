@@ -12,6 +12,7 @@
 #include <controller/rbn/BNController.h>
 #include "EvaluationFunctions.h"
 #include "Circle.h"
+#include "Rect.h"
 
 #define KEY_CIRCLE1 "circle1"
 #define KEY_CIRCLE2 "circle2"
@@ -72,8 +73,8 @@ private:
 
 private:
     bool CheckCollision(CVector3& position, const std::vector<SInitSetup>& botLocations);
-    vector<SInitSetup> ComputeSpawnLocations(int nTrial);
-    CVector3 GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations);
+    vector<SInitSetup> ComputeSpawnLocations(int nTrial, const Rect& spawnArea);
+    CVector3 GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations, const Rect& spawnArea);
     bool IsInsideCircles(const CVector2& point);
 };
 

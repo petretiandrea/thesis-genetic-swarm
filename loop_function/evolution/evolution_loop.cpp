@@ -28,8 +28,8 @@ void EvolutionLoop::Init(TConfigurationNode &t_tree) {
     CVector3 tmpCircle;
     GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE1, tmpCircle, constants::CIRCLE1);
     blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
-   /* GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
-    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });*/
+    GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
+    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
 
     int footbotNumber;
     GetNodeAttribute(t_tree, KEY_FOOTBOT_NUMBER, footbotNumber);
@@ -54,7 +54,7 @@ void EvolutionLoop::GenerateRandomSpawnLocation(int nTrials) {
 
     for (int i = 0; i < nTrials; i++) {
         // compute all locations for trials
-        auto locations = ComputeSpawnLocations(i);
+        auto locations = ComputeSpawnLocations(i, constants::SPAWN_AREA);
         for(int j = 0; j < locations.size(); j++) {
             this->initialSpawnLocations.put(i, j, locations[j]);
         }
@@ -74,7 +74,7 @@ void EvolutionLoop::PrepareForTrial(int nTrial) {
  * @param nTrial number of current trial
  * @return A vector of random location
  */
-vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTrial) {
+vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTrial, const Rect& spawnArea) {
     // spawn bot and generate position
     CRadians orientation;
     std::vector<SInitSetup> botLocations;
@@ -88,7 +88,7 @@ vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTria
                     CRadians::ZERO      // rotation around X
             );
 
-            CVector3 position = GenerateLocationWithoutCollision(constants::MAX_ATTEMPTS_LOCATION_SPAWN, botLocations);
+            CVector3 position = GenerateLocationWithoutCollision(constants::MAX_ATTEMPTS_LOCATION_SPAWN, botLocations, spawnArea);
             spawnLocation.Position.Set(position.GetX(), position.GetY(), position.GetZ());
             botLocations.push_back(spawnLocation);
         } catch (std::logic_error& e) {
@@ -105,17 +105,31 @@ vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTria
  * @param botLocations current bot locations.
  * @return
  */
-CVector3 EvolutionLoop::GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations) {
+#include "Rect.h"
+CVector3 EvolutionLoop::GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations, const Rect& spawnArea) {
     bool collision = true;
     CVector3 position;
     int currentAttempt;
 
-    double rangeSize = (constants::ARENA_SIDE_SIZE - 2 * constants::FOOTBOT_RADIUS) / 2;
-    CRange<Real> rangeArena(-rangeSize, rangeSize);
+    cout << "Width " << spawnArea.width() << " Height " << spawnArea.height() << endl;
+
+    CRange<Real> xRange = {
+            spawnArea.topLeft.GetX() + constants::FOOTBOT_RADIUS,
+            spawnArea.downRight.GetX() - constants::FOOTBOT_RADIUS
+    };
+    CRange<Real> yRange = {
+            spawnArea.downRight.GetY() + constants::FOOTBOT_RADIUS,
+            spawnArea.topLeft.GetY() - constants::FOOTBOT_RADIUS
+    };
+
+    cout << "x: " << xRange << endl;
+    cout << "y: " << yRange << endl;
+    /*double rangeSize = (constants::ARENA_SIDE_SIZE - 2 * constants::FOOTBOT_RADIUS) / 2;
+    CRange<Real> rangeArena(-rangeSize, rangeSize);*/
     for(currentAttempt = 0; collision && currentAttempt < maxAttempts; currentAttempt++) {
         position.SetZ(0);
-        position.SetX(randomGenerator->Uniform(rangeArena));
-        position.SetY(randomGenerator->Uniform(rangeArena));
+        position.SetX(randomGenerator->Uniform(xRange));
+        position.SetY(randomGenerator->Uniform(yRange));
         collision = CheckCollision(position, botLocations);
     }
     if(currentAttempt >= maxAttempts) {
