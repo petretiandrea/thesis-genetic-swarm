@@ -14,7 +14,7 @@ int main(){
     auto userConfig = config::create_from_file("default.json");
 
     static argos::CSimulator& simulator = argos::CSimulator::GetInstance();
-    config::load_experiment_config(simulator, "test.argos", userConfig);
+    config::load_experiment_config(simulator, "experiments/task1.argos", userConfig);
 
     auto experiment = bngenome::create_context(userConfig.genetic_config, simulator);
     experiment.loop.GenerateRandomSpawnLocation(userConfig.genetic_config.n_trials);
@@ -26,7 +26,7 @@ int main(){
     GeneticBuilder<GA1DBinaryStringGenome> evaluator(
             genome,
             bngenome::initializer(rnd, (float) userConfig.controller_config.bias),
-            bngenome::evaluator(experiment)
+            bngenome::evaluatorByExperiment(experiment)
     );
 
     auto iterator = evaluator.maximize()

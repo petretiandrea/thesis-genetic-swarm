@@ -27,7 +27,7 @@ public:
     BooleanNetwork& associatedNetwork() { return *booleanNetwork; }
 
 private:
-    inline void LoadFromFile(const string& filename) {} // TODO: implement
+    void LoadFromFile(const string& filename);
 
 private:
     CCI_DifferentialSteeringActuator* wheels;

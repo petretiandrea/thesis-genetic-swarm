@@ -14,7 +14,7 @@ EvolutionLoop::EvolutionLoop() :
         initialSpawnLocations(),
         randomGenerator(nullptr),
         currentTrial(0),
-        botCountForCircle{0,0} {
+        botCountInsideCircle(0) {
 
     evaluationFunction = evaluation::max_of_circle();
 }
@@ -28,8 +28,8 @@ void EvolutionLoop::Init(TConfigurationNode &t_tree) {
     CVector3 tmpCircle;
     GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE1, tmpCircle, constants::CIRCLE1);
     blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
-    GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
-    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
+   /* GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
+    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });*/
 
     int footbotNumber;
     GetNodeAttribute(t_tree, KEY_FOOTBOT_NUMBER, footbotNumber);
@@ -160,13 +160,14 @@ bool EvolutionLoop::IsInsideCircles(const CVector2& point) {
 void EvolutionLoop::PostExperiment() {
     // count robot for each circle
     CVector2 botPosition;
-    botCountForCircle[0] = 0;
-    botCountForCircle[1] = 0;
+    botCountInsideCircle = 0;
     for(auto& bot : bots) {
         bot->GetEmbodiedEntity().GetOriginAnchor().Position.ProjectOntoXY(botPosition);
-        if(blackCircles[0].containsPoint(botPosition)) botCountForCircle[0] += 1;
-        if(blackCircles[1].containsPoint(botPosition)) botCountForCircle[1] += 1;
+        if(blackCircles[0].containsPoint(botPosition)) botCountInsideCircle += 1;
+        //cout << botPosition.GetX() << ", " << botPosition.GetY() << endl;
     }
+
+    //cout << "Bot count " << botCountInsideCircle << endl;
 }
 
 void EvolutionLoop::Reset() {
@@ -180,22 +181,24 @@ void EvolutionLoop::Reset() {
         }
     }
     // reset the robot counter
-    botCountForCircle[0] = 0;
-    botCountForCircle[1] = 0;
+    botCountInsideCircle = 0;
 }
 
 double EvolutionLoop::CalculateEvaluation() {
-    return evaluationFunction(bots.size(), botCountForCircle[0], botCountForCircle[1]);
+    return botCountInsideCircle / (double) bots.size();
 }
 
 double EvolutionLoop::MaxRobotCount() {
-    return (botCountForCircle[0] > botCountForCircle[1]) ? botCountForCircle[0] : botCountForCircle[1];
+    return (double) botCountInsideCircle;
 }
 
 void EvolutionLoop::ConfigureFromGenome(const vector<bool>& genome) {
     auto booleanMatrix = utility::vectorToMatrix(genome,
             controllers.back()->associatedNetwork().getBooleanFunctions().getRows(),
             controllers.back()->associatedNetwork().getBooleanFunctions().getColumns());
+
+    //cout << "Matrix update " << endl;
+    //cout << booleanMatrix << endl;
 
     for(auto& controller : controllers) {
         controller->associatedNetwork().changeBooleanFunction(booleanMatrix);

@@ -4,7 +4,8 @@ add_library(genetic_core SHARED
         BNGenome.cpp
         GenomeEvalData.h
         GenomeEvalData.cpp
-        GeneticEvaluator.h PerformanceLogger.h PerformanceLogger.cpp)
+        PerformanceLogger.h
+        PerformanceLogger.cpp)
 
 target_link_libraries(
         genetic_core

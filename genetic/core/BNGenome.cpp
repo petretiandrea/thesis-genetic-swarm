@@ -18,7 +18,7 @@ GenomeInitializer<GA1DBinaryStringGenome&> bngenome::initializer(rnd::Random& rn
     };
 }
 
-GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluator(GeneticExperimentContext& experiment) {
+GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluatorByExperiment(GeneticExperimentContext& experiment) {
     return [&experiment](GA1DBinaryStringGenome& genome) {
 
         double performance = 0;
