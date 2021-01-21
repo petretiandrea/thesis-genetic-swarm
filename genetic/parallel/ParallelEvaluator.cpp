@@ -49,7 +49,10 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
         auto& boolGenome = dynamic_cast<GA1DBinaryStringGenome&>(population.individual(i));
         auto actualScore = EvaluatedHack::isEvaluated(&boolGenome) ? boolGenome.score() : -1;
 
+        //cout << "Genome " << boolGenome << endl;
+
         if (actualScore == -1) {
+            //cout << "Genome to evaluate " << boolGenome << endl;
             short genomeArray[boolGenome.size()];
             genomeToShortArray(boolGenome, genomeArray);
             //TODO: check if is already evaluated
@@ -58,21 +61,9 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
             memoryIndex++;
             needEvaluation.push_back(i);
         }
-
-        // debug print
-        /*cout << "Bool " << boolGenome << endl;
-        std::vector<short> w;
-        w.assign(genomeArray, genomeArray + boolGenome.size());
-        cout << "Short " << w << endl;*/
-
-
-        //auto* evalData = dynamic_cast<bngenome::CustomEvalData*>(boolGenome.evalData());
-        /*if(evalData == NULL) {
-            boolGenome.evalData(bngenome::CustomEvalData());
-            evalData = dynamic_cast<bngenome::CustomEvalData*>(boolGenome.evalData());
-        }*/
     }
 
+    //cout << "Nedd eval " << needEvaluation.size() << endl;
     prepareTaskSlave(needEvaluation.size());
     workers.resumeSlaves();
     workers.waitSlaves();
@@ -84,9 +75,6 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
 
         auto& slaveData = memory.getGenome(i);
         boolGenome.score((float) slaveData.fitness);
-
-        //cout << "Slave data " << (float) slaveData.fitness << endl;
-        //((bngenome::CustomEvalData*) boolGenome.evalData())->robotCount = robotCount;
     }
 }
 
@@ -131,7 +119,6 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
         LOG << " Slave " << slaveId << " pid: " << ::getpid() << " slice " << from << " to " << (from + size) << " size: " << size << endl;
 
         for(int i = from; i < from + size; i++) {
-            cout << "Slice " << i << endl;
             auto& shared = memory.getGenome(i);
 
             //cout << i << " " << shared.genome << endl;
@@ -150,7 +137,7 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
            bool needEvaluation = shared.fitness == -1;
            if(needEvaluation) {
                //cout << "Testing " << genome << endl;
-               auto performance = bngenome::evaluator(experiment)(genome);
+               auto performance = bngenome::evaluatorByExperiment(experiment)(genome);
                //auto robotCount = ((bngenome::CustomEvalData*) genome.evalData())->robotCount;
                //cout << "Perf: " << performance << endl;
                memory.updateGenomeEvaluation(i, performance, 0);
@@ -160,4 +147,10 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
        LOG.Flush();
        LOGERR.Flush();
    }
+}
+
+std::function<double(GA1DBinaryStringGenome &)> ParallelEvaluator::genomeEvaluator() {
+    return [](GA1DBinaryStringGenome & genome) {
+      return genome.score();
+    };
 }

@@ -31,7 +31,7 @@ namespace bngenome {
     }
 
     GenomeInitializer<GA1DBinaryStringGenome&> initializer(rnd::Random& rnd, float bias);
-    GenomeEvaluator<GA1DBinaryStringGenome> evaluator(GeneticExperimentContext& experiment);
+    GenomeEvaluator<GA1DBinaryStringGenome> evaluatorByExperiment(GeneticExperimentContext& experiment);
     vector<bool> toVector(const GA1DBinaryStringGenome& genome);
 }
 

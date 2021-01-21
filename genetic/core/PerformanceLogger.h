@@ -8,6 +8,7 @@
 #include <ga/ga.h>
 #include <iostream>
 #include <core/configuration/ExperimentConfiguration.h>
+#include <vector>
 
 using namespace std;
 
@@ -22,7 +23,8 @@ public:
     PerformanceLogger(const string& folder, const string& basename);
     void saveStatistics(const GAPopulation &population);
 
-    static string statisticsBasenameFromConfiguration(const config::ExperimentConfiguration& configuration);
+    static string statisticsBasenameFromConfiguration(const config::ExperimentConfiguration& configuration, const string& prefix = "");
+    static void saveTestPerformance(const string& filename, std::vector<double>& testPerformance);
 
 private:
     static void saveIndividual(ofstream& stream, int generation, GAGenome& genome);

@@ -10,6 +10,7 @@ add_executable(
 
 target_link_libraries(swarm_evolve_parallel
         rt pthread
+        testing
         galib_wrapper
         utility
         evolution_loop

@@ -22,6 +22,7 @@ public:
                       int parallelism);
 
     std::function<void(GAPopulation&)> populationEvaluator();
+    std::function<double(GA1DBinaryStringGenome&)> genomeEvaluator();
 
 private:
     void evaluatePopulation(GAPopulation& population);

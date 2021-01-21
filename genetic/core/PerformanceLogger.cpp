@@ -40,7 +40,7 @@ void PerformanceLogger::saveIndividual(ofstream& stream, int generation, GAGenom
             << endl << flush;
 }
 
-string PerformanceLogger::statisticsBasenameFromConfiguration(const config::ExperimentConfiguration &configuration) {
+string PerformanceLogger::statisticsBasenameFromConfiguration(const config::ExperimentConfiguration &configuration, const string& prefix) {
     std::ostringstream metainfo;
     time_t rawtime;
     struct tm * timeinfo;
@@ -50,6 +50,7 @@ string PerformanceLogger::statisticsBasenameFromConfiguration(const config::Expe
     timeinfo = localtime (&rawtime);
 
     strftime (buffer,80,"%H-%M_%d-%m",timeinfo);
+    if(!prefix.empty()) metainfo << prefix << "_";
     metainfo
             << "nodes" << configuration.controller_config.nodes
             << "_k" << configuration.controller_config.input_for_node
@@ -63,4 +64,14 @@ string PerformanceLogger::statisticsBasenameFromConfiguration(const config::Expe
             << "_trials" << configuration.genetic_config.n_trials
             << "_" << string(buffer);
     return metainfo.str();
+}
+
+void PerformanceLogger::saveTestPerformance(const string &filename, std::vector<double>& testPerformance) {
+    ofstream file;
+    file.open(filename);
+    file << "trial;score" << endl << flush;
+    for(int i = 0; i < testPerformance.size(); i++) {
+        file << i << ";" << testPerformance[i] << endl << flush;
+    }
+    file.close();
 }
