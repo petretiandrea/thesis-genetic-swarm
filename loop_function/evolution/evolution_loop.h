@@ -71,7 +71,7 @@ private:
     vector<BNController*> controllers;
     int currentTrial;
     evaluation::EvaluationFunction evaluationFunction;
-    int botCountInsideCircles[2];
+    int botCountInsideCircle;
 
 private:
     bool CheckCollision(CVector3& position, const std::vector<SInitSetup>& botLocations);

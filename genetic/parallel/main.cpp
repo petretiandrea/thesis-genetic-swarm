@@ -12,17 +12,17 @@
 #include <genetic/test/testing.h>
 #include <utility/Utility.h>
 
-#define CONFIG_JSON "experiments/task2.json"
-#define TRAIN_EXPERIMENT "experiments/task2.argos"
-#define TRAIN_STATISTICS_FOLDER "statistics/task2/"
-#define TEST_EXPERIMENT "experiments/task2-test.argos"
+#define CONFIG_JSON "experiments/config.json"
+#define TRAIN_EXPERIMENT "experiments/task1.argos"
+#define TRAIN_STATISTICS_FOLDER "statistics/task1/"
+#define TEST_EXPERIMENT "experiments/task1.argos"
 #define TEST_RUN 30
-#define TEST_STATISTICS_FOLDER "statistics/task2/"
+#define TEST_STATISTICS_FOLDER "statistics/task1/"
 
 int main() {
 
     auto userConfig = config::create_from_file(CONFIG_JSON);
-    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task2");
+    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task1");
     auto logger = PerformanceLogger(TRAIN_STATISTICS_FOLDER, statisticsBasename);
 
     ParallelEvaluator parallel(userConfig, TRAIN_EXPERIMENT, 9);
