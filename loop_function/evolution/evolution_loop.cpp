@@ -14,7 +14,7 @@ EvolutionLoop::EvolutionLoop() :
         initialSpawnLocations(),
         randomGenerator(nullptr),
         currentTrial(0),
-        botCountInsideCircle(0) {
+        botCountInsideCircles{ 0, 0 } {
 
     evaluationFunction = evaluation::max_of_circle();
 }
@@ -28,11 +28,14 @@ void EvolutionLoop::Init(TConfigurationNode &t_tree) {
     CVector3 tmpCircle;
     GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE1, tmpCircle, constants::CIRCLE1);
     blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
-   /* GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
-    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });*/
+    GetNodeAttributeOrDefault(t_tree, KEY_CIRCLE2, tmpCircle, constants::CIRCLE2);
+    blackCircles.push_back(Circle { tmpCircle.GetX(), tmpCircle.GetY(), tmpCircle.GetZ() });
 
     int footbotNumber;
     GetNodeAttribute(t_tree, KEY_FOOTBOT_NUMBER, footbotNumber);
+
+    bool visualization_mode;
+    GetNodeAttributeOrDefault(t_tree, KEY_VISUALIZATION, visualization_mode, false);
 
     randomGenerator = CRandom::CreateRNG("argos");
 
@@ -42,6 +45,14 @@ void EvolutionLoop::Init(TConfigurationNode &t_tree) {
         bots.push_back(bot);
         controllers.push_back(&dynamic_cast<BNController&>(bot->GetControllableEntity().GetController()));
         AddEntity(*bot);
+    }
+
+    // if visualization is enabled generate n trials and prepare for n-th trial
+    if(visualization_mode) {
+        int trial;
+        GetNodeAttribute(t_tree, KEY_TRIAL, trial);
+        this->GenerateRandomSpawnLocation(trial + 1);
+        this->PrepareForTrial(trial);
     }
 }
 
@@ -54,7 +65,7 @@ void EvolutionLoop::GenerateRandomSpawnLocation(int nTrials) {
 
     for (int i = 0; i < nTrials; i++) {
         // compute all locations for trials
-        auto locations = ComputeSpawnLocations(i);
+        auto locations = ComputeSpawnLocations(i, constants::SPAWN_AREA);
         for(int j = 0; j < locations.size(); j++) {
             this->initialSpawnLocations.put(i, j, locations[j]);
         }
@@ -74,7 +85,7 @@ void EvolutionLoop::PrepareForTrial(int nTrial) {
  * @param nTrial number of current trial
  * @return A vector of random location
  */
-vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTrial) {
+vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTrial, const Rect& spawnArea) {
     // spawn bot and generate position
     CRadians orientation;
     std::vector<SInitSetup> botLocations;
@@ -88,7 +99,7 @@ vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTria
                     CRadians::ZERO      // rotation around X
             );
 
-            CVector3 position = GenerateLocationWithoutCollision(constants::MAX_ATTEMPTS_LOCATION_SPAWN, botLocations);
+            CVector3 position = GenerateLocationWithoutCollision(constants::MAX_ATTEMPTS_LOCATION_SPAWN, botLocations, spawnArea);
             spawnLocation.Position.Set(position.GetX(), position.GetY(), position.GetZ());
             botLocations.push_back(spawnLocation);
         } catch (std::logic_error& e) {
@@ -105,17 +116,31 @@ vector<EvolutionLoop::SInitSetup> EvolutionLoop::ComputeSpawnLocations(int nTria
  * @param botLocations current bot locations.
  * @return
  */
-CVector3 EvolutionLoop::GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations) {
+#include "Rect.h"
+CVector3 EvolutionLoop::GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations, const Rect& spawnArea) {
     bool collision = true;
     CVector3 position;
     int currentAttempt;
 
-    double rangeSize = (constants::ARENA_SIDE_SIZE - 2 * constants::FOOTBOT_RADIUS) / 2;
-    CRange<Real> rangeArena(-rangeSize, rangeSize);
+    cout << "Width " << spawnArea.width() << " Height " << spawnArea.height() << endl;
+
+    CRange<Real> xRange = {
+            spawnArea.topLeft.GetX() + constants::FOOTBOT_RADIUS,
+            spawnArea.downRight.GetX() - constants::FOOTBOT_RADIUS
+    };
+    CRange<Real> yRange = {
+            spawnArea.downRight.GetY() + constants::FOOTBOT_RADIUS,
+            spawnArea.topLeft.GetY() - constants::FOOTBOT_RADIUS
+    };
+
+    cout << "x: " << xRange << endl;
+    cout << "y: " << yRange << endl;
+    /*double rangeSize = (constants::ARENA_SIDE_SIZE - 2 * constants::FOOTBOT_RADIUS) / 2;
+    CRange<Real> rangeArena(-rangeSize, rangeSize);*/
     for(currentAttempt = 0; collision && currentAttempt < maxAttempts; currentAttempt++) {
         position.SetZ(0);
-        position.SetX(randomGenerator->Uniform(rangeArena));
-        position.SetY(randomGenerator->Uniform(rangeArena));
+        position.SetX(randomGenerator->Uniform(xRange));
+        position.SetY(randomGenerator->Uniform(yRange));
         collision = CheckCollision(position, botLocations);
     }
     if(currentAttempt >= maxAttempts) {
@@ -160,10 +185,12 @@ bool EvolutionLoop::IsInsideCircles(const CVector2& point) {
 void EvolutionLoop::PostExperiment() {
     // count robot for each circle
     CVector2 botPosition;
-    botCountInsideCircle = 0;
+    botCountInsideCircles[0] = 0;
+    botCountInsideCircles[1] = 0;
     for(auto& bot : bots) {
         bot->GetEmbodiedEntity().GetOriginAnchor().Position.ProjectOntoXY(botPosition);
-        if(blackCircles[0].containsPoint(botPosition)) botCountInsideCircle += 1;
+        if(blackCircles[0].containsPoint(botPosition)) botCountInsideCircles[0] += 1;
+        if(blackCircles[1].containsPoint(botPosition)) botCountInsideCircles[1] += 1;
         //cout << botPosition.GetX() << ", " << botPosition.GetY() << endl;
     }
 
@@ -181,15 +208,23 @@ void EvolutionLoop::Reset() {
         }
     }
     // reset the robot counter
-    botCountInsideCircle = 0;
+    botCountInsideCircles[0] = 0;
+    botCountInsideCircles[1] = 0;
 }
 
 double EvolutionLoop::CalculateEvaluation() {
-    return botCountInsideCircle / (double) bots.size();
+    auto eval = evaluation::triangular(0, bots.size());
+
+    auto count1 = eval(botCountInsideCircles[0]) * (bots.size() / 2);
+    auto count2 = eval(botCountInsideCircles[1]) * (bots.size() / 2);
+
+    cout << "C1 " << count1 << " C2 " << count2 << endl;
+
+    return (count1 + count2) / 2;
 }
 
 double EvolutionLoop::MaxRobotCount() {
-    return (double) botCountInsideCircle;
+    return (botCountInsideCircles[0] > botCountInsideCircles[1]) ? botCountInsideCircles[0] : botCountInsideCircles[1];
 }
 
 void EvolutionLoop::ConfigureFromGenome(const vector<bool>& genome) {

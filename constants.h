@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <argos3/core/utility/math/vector3.h>
+#include <loop_function/evolution/Rect.h>
 
 namespace constants {
     extern const int RANDOM_SEED = 123;
@@ -20,9 +21,14 @@ namespace constants {
 //    extern const float ARENA_SIDE_SIZE = 6.0f - 0.1f;   // arena size - wall depth
 //    extern const argos::CVector3 CIRCLE1(-1.83f, 0.0f, 0.8f);  // location of first black circle
 //    extern const argos::CVector3 CIRCLE2(1.83f, 0.0f, 0.8f);   // location of second black circle
+
+
+    // all arena config
     extern const float ARENA_SIDE_SIZE = 5.0f - 0.1f;   // arena size - wall depth
-    extern const argos::CVector3 CIRCLE1(-0.0f, 0.0f, 0.8f);  // location of first black circle
-    //extern const argos::CVector3 CIRCLE2(1.5f, 0.0f, 0.8f);   // location of second black circle
+    //extern const Rect SPAWN_AREA { .topLeft = {-2.4, 2.4}, .downRight = {2.4, -2.4} };
+    extern const Rect SPAWN_AREA { .topLeft = {-2.4, 2.4}, .downRight = {0, 0} };
+    extern const argos::CVector3 CIRCLE1(-1.5f, -1.25f, 0.8f);  // location of first black circle
+    extern const argos::CVector3 CIRCLE2(1.5f, -1.25f, 0.8f); // location of second black circle
 }
 
 #endif //SWARM_GEN_CONSTANTS_H
