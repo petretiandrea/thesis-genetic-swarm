@@ -11,12 +11,7 @@ int main() {
     static argos::CSimulator& simulator = argos::CSimulator::GetInstance();
     static config::ExperimentConfiguration userconfig = config::create_from_file("experiments/task2.json");
 
-    config::load_experiment_config(simulator, "experiments/check-arena.argos", userconfig);
-
-    static auto* loop = dynamic_cast<EvolutionLoop*>(&simulator.GetLoopFunctions());
-
-    loop->GenerateRandomSpawnLocation(1);
-    loop->PrepareForTrial(0);
+    config::load_experiment_config(simulator, "experiments/task2-viz.argos", userconfig);
 
     simulator.Reset();
     simulator.Execute();

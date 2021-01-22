@@ -9,9 +9,9 @@
 #include "testing.h"
 
 const int RUNS = 30;
-const char* USER_CONFIG = "experiments/task1.json";
-const char* ARGOS_EXPERIMENT = "experiments/task1-test.argos";
-const char* RESULT_FILENAME = "statistics/result_prova.csv";
+const char* USER_CONFIG = "experiments/task2.json";
+const char* ARGOS_EXPERIMENT = "experiments/task2-test.argos";
+const char* RESULT_FILENAME = "statistics/task2/result_task2__nodes50_k3_bias0.21_prox1.5_p100_g80_pM0.01_pC0_el5_trials3_11-16_22-01_best_all.csv";
 
 int main() {
 

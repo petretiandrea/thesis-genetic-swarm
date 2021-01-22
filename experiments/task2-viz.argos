@@ -24,7 +24,7 @@
         <footbot_proximity        implementation="default"    show_rays="true" />
         <footbot_motor_ground     implementation="rot_z_only" show_rays="false" />
       </sensors>
-      <params network="statistics/task1_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_10-41_20-01_best_all.csv"/>
+      <params network="statistics/task2/task2_nodes50_k3_bias0.21_prox1.5_p100_g80_pM0.01_pC0_el5_trials3_11-16_22-01_best_all.csv"/>
     </bn_controller>
   </controllers>
 
@@ -32,9 +32,10 @@
   <!-- * Loop functions * -->
   <!-- ****************** -->
   <loop_functions library="./build/loop_function/evolution/libevolution_loop"
-                  label="evolution_loop"/>
-
-
+                  label="evolution_loop"
+                  n_footbot=30
+                  visualization="true"
+                  trial=0 />
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
