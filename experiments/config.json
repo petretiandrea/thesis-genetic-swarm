@@ -13,7 +13,7 @@
     "genome_size" : 400,
     "generations" : 80,
     "mutation_probability" : 0.01,
-    "crossover_probability" : 0.0,
+    "crossover_probability" : 0.1,
     "population_size" : 100,
     "elitism" : 5
   }
