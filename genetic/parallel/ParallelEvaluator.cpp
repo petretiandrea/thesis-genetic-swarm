@@ -53,13 +53,14 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
 
         if (actualScore == -1) {
             //cout << "Genome to evaluate " << boolGenome << endl;
-            short genomeArray[boolGenome.size()];
+            short* genomeArray = new short[boolGenome.size()];
             genomeToShortArray(boolGenome, genomeArray);
             //TODO: check if is already evaluated
             //cout << "Sending " << boolGenome << endl;
             this->memory.putGenome(memoryIndex, genomeArray, boolGenome.size(), actualScore, -1);
             memoryIndex++;
             needEvaluation.push_back(i);
+            delete[] genomeArray;
         }
     }
 

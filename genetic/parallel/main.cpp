@@ -15,7 +15,7 @@
 #define CONFIG_JSON "experiments/task2.json"
 #define TRAIN_EXPERIMENT "experiments/task2.argos"
 #define TRAIN_STATISTICS_FOLDER "statistics/task2/"
-#define TEST_EXPERIMENT "experiments/task2-test.argos"
+#define TEST_EXPERIMENT "experiments/task2.argos"
 #define TEST_RUN 30
 #define TEST_STATISTICS_FOLDER "statistics/task2/"
 

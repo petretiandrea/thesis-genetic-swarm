@@ -11,10 +11,10 @@
   "genetic_config" : {
     "n_trials" : 3,
     "genome_size" : 400,
-    "generations" : 80,
+    "generations" : 100,
     "mutation_probability" : 0.01,
     "crossover_probability" : 0.0,
-    "population_size" : 100,
+    "population_size" : 80,
     "elitism" : 5
   }
 }

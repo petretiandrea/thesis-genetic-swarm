@@ -218,7 +218,7 @@ double EvolutionLoop::CalculateEvaluation() {
     auto count1 = eval(botCountInsideCircles[0]) * (bots.size() / 2);
     auto count2 = eval(botCountInsideCircles[1]) * (bots.size() / 2);
 
-    cout << "C1 " << count1 << " C2 " << count2 << endl;
+    //cout << "C1 " << count1 << " C2 " << count2 << endl;
 
     return (count1 + count2) / 2;
 }
