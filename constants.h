@@ -26,9 +26,10 @@ namespace constants {
     // all arena config
     extern const float ARENA_SIDE_SIZE = 5.0f - 0.1f;   // arena size - wall depth
     //extern const Rect SPAWN_AREA { .topLeft = {-2.4, 2.4}, .downRight = {2.4, -2.4} };
-    extern const Rect SPAWN_AREA { .topLeft = {-2.4, 2.4}, .downRight = {0, 0} };
-    extern const argos::CVector3 CIRCLE1(-1.5f, -1.25f, 0.8f);  // location of first black circle
-    extern const argos::CVector3 CIRCLE2(1.5f, -1.25f, 0.8f); // location of second black circle
+    extern const Rect SPAWN_AREA { .topLeft = {-2.4, 2.4}, .downRight = {2.4, -2.4} };
+    extern const argos::CVector3 CIRCLE1(-1.25f, -1.25f, 0.7f);  // location of first black circle
+    extern const argos::CVector3 CIRCLE2(1.25f, -1.25f, 0.7f); // location of second black circle
+    extern const argos::CVector3 CIRCLE3(0.0f, 1.25f, 0.7f); // location of third black circle
 }
 
 #endif //SWARM_GEN_CONSTANTS_H

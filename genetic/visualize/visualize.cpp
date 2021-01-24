@@ -9,7 +9,7 @@
 int main() {
 
     static argos::CSimulator& simulator = argos::CSimulator::GetInstance();
-    static config::ExperimentConfiguration userconfig = config::create_from_file("experiments/task2.json");
+    static config::ExperimentConfiguration userconfig = config::create_from_file("experiments/task3.json");
 
     config::load_experiment_config(simulator, "experiments/task2-viz.argos", userconfig);
 

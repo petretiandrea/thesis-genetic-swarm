@@ -16,6 +16,8 @@
 
 #define KEY_CIRCLE1 "circle1"
 #define KEY_CIRCLE2 "circle2"
+#define KEY_CIRCLE3 "circle3"
+
 #define KEY_FOOTBOT_NUMBER "n_footbot"
 #define KEY_VISUALIZATION "visualization"
 #define KEY_TRIAL "trial"
@@ -70,8 +72,7 @@ private:
     vector<CFootBotEntity*> bots;
     vector<BNController*> controllers;
     int currentTrial;
-    evaluation::EvaluationFunction evaluationFunction;
-    int botCountInsideCircles[2];
+    vector<int> botInsideCircles;
 
 private:
     bool CheckCollision(CVector3& position, const std::vector<SInitSetup>& botLocations);
