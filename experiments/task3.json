@@ -4,7 +4,7 @@
     "nodes" : 50,
     "input_for_node" : 3,
     "bias" : 21e-2,
-    "proximity_threshold" : 0,
+    "proximity_threshold" : 1.5,
     "motor_ground_threshold" : 1e-1,
     "constant_speed" : 10
   },
