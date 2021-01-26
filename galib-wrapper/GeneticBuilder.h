@@ -37,6 +37,7 @@ public:
     GeneticBuilder<G>& mutationRate(double mutationRate);
     GeneticBuilder<G>& crossoverRate(double crossoverRate);
     GeneticBuilder<G>& elitismReplacement(int replacement);
+    GeneticBuilder<G>& selector(GASelectionScheme& selector);
     GeneticBuilder<G>& maximize();
     GeneticBuilder<G>& minimize();
     GeneticBuilder<G>& populationEvaluator(PopulationEvaluator f);
@@ -105,6 +106,12 @@ GeneticBuilder<G> &GeneticBuilder<G>::crossoverRate(double crossoverRate) {
 template<typename G>
 GeneticBuilder<G> &GeneticBuilder<G>::elitismReplacement(int replacement) {
     algorithm->nReplacement(replacement);
+    return *this;
+}
+
+template<typename G>
+GeneticBuilder<G>& GeneticBuilder<G>::selector(GASelectionScheme& selector) {
+    algorithm->selector(selector);
     return *this;
 }
 

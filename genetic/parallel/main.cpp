@@ -8,58 +8,57 @@
 #include <galib-wrapper/GeneticBuilder.h>
 #include <genetic/core/BNGenome.h>
 #include "ParallelEvalutator.h"
+#include <genetic/core/PerformanceLogger.h>
+#include <genetic/test/testing.h>
+#include <utility/Utility.h>
+#include <constants.h>
 
-void saveIntoLog(const GAPopulation* population);
+#define CONFIG_JSON "experiments/task3/config.json"
+#define TRAIN_EXPERIMENT "experiments/task3/task3.argos"
+#define TRAIN_STATISTICS_FOLDER "statistics/task3/"
+#define TEST_EXPERIMENT "experiments/task3/task3.argos"
+#define TEST_RUN 30
+#define TEST_STATISTICS_FOLDER "statistics/task3/"
 
 int main() {
 
-    auto userConfig = config::create_from_file("default.json");
+    auto userConfig = config::create_from_file(CONFIG_JSON);
+    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task3");
+    auto logger = PerformanceLogger(TRAIN_STATISTICS_FOLDER, statisticsBasename);
 
-    ParallelEvaluator parallel(userConfig, "test.argos", 2);
+    ParallelEvaluator parallel(userConfig, TRAIN_EXPERIMENT, 9);
 
-    rnd::Random rnd(123);
+    rnd::Random rnd(constants::RANDOM_SEED);
     GA1DBinaryStringGenome genome(userConfig.genetic_config.genome_size);
-    GeneticBuilder<GA1DBinaryStringGenome> evaluator(
-            genome,
+    GeneticBuilder<GA1DBinaryStringGenome> evaluator(genome,
             bngenome::initializer(rnd, (float) userConfig.controller_config.bias),
-            [](GA1DBinaryStringGenome& g) { return g.score(); }
-    );
+            parallel.genomeEvaluator());
 
     auto iterator = evaluator.maximize()
+            .seed(1234)
             .mutationRate(userConfig.genetic_config.mutation_probability)
             .crossoverRate(userConfig.genetic_config.crossover_probability)
             .populationSize(userConfig.genetic_config.population_size)
             .elitismReplacement(userConfig.genetic_config.replacement())
-            .seed(1234)
             .populationEvaluator(parallel.populationEvaluator())
             .build(userConfig.genetic_config.generations);
 
 
     cout << "Starting generations..." << endl;
+    Result lastResult;
     for(auto& result : iterator) {
         cout << "Done generation " << result.generation
-             << " Best fitness " << result.population->best().fitness()
+             << " Best fitness " << result.population->best().score()
              << endl;
 
-        saveIntoLog(result.population);
+        lastResult = result;
+        logger.saveStatistics(*result.population);
     }
-}
 
+    // evaluation phase
+    cout << "Evaluating phase" << endl;
+    stringstream ss; ss << lastResult.population->best();
+    cout << "Using best genome with score" << lastResult.population->best().score() << endl;
 
-void saveIntoLog(const GAPopulation* population) {
-    static double best_score = 0;
-    static GAGenome* best_genome = nullptr;
-
-    cout << "Saving population info " << endl;
-    for(int i = 0; i < population->size(); i++) {
-        auto& individual = population->individual(i);
-
-        cout << "Genome " << individual << endl;
-        if(individual.score() > best_score) {
-            best_genome = &individual;
-            best_score = best_genome->score();
-            cout << "Best score: " << best_score << " booleans: " << *best_genome << endl;
-            //logger.saveGenomeAsBest(*best_genome);
-        }
-    }
+    testing::evaluate(ss.str(), userConfig, TEST_EXPERIMENT,string(TEST_STATISTICS_FOLDER) + "result_" + statisticsBasename, TEST_RUN);
 }

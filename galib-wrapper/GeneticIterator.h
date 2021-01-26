@@ -64,6 +64,8 @@ public:
 
     inline GeneticIterator& begin() {
         algorithm->initialize(seed);
+        this->result.generation = this->algorithm->generation();
+        this->result.population = &this->algorithm->population();
         return *this;
     }
 

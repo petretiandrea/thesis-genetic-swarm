@@ -1,15 +1,16 @@
 
-add_library(genetic_core STATIC
+add_library(genetic_core SHARED
         BNGenome.h
         BNGenome.cpp
         GenomeEvalData.h
         GenomeEvalData.cpp
-        GeneticEvaluator.h)
+        PerformanceLogger.h
+        PerformanceLogger.cpp)
 
 target_link_libraries(
         genetic_core
         utility
-        evolution_loop
+        loop_functions
         galib_wrapper
         ${GALIB_LIBRARIES}
 )

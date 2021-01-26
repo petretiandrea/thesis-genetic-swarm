@@ -14,6 +14,7 @@ using namespace std;
 namespace utility {
 
     vector<bool> generateBinaryVector(int size, rnd::Random& rnd, float bias);
+    vector<bool> boolVectorFromString(const string& string);
     int boolToInt(bool value, bool invert = false);
 
     template<typename T> static Matrix<T> vectorToMatrix(const vector<T>& vector, int row, int column) {

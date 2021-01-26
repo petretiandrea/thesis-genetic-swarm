@@ -4,10 +4,9 @@
 #include <core/configuration/ArgosExperiment.h>
 #include <genetic/core/BNGenome.h>
 #include <galib-wrapper/GeneticBuilder.h>
+#include <genetic/core/PerformanceLogger.h>
 
 using namespace std;
-
-void saveIntoLog(const GAPopulation* population);
 
 int main(){
 
@@ -15,17 +14,19 @@ int main(){
     auto userConfig = config::create_from_file("default.json");
 
     static argos::CSimulator& simulator = argos::CSimulator::GetInstance();
-    config::load_experiment_config(simulator, "test.argos", userConfig);
+    config::load_experiment_config(simulator, "experiments/task1.argos", userConfig);
 
     auto experiment = bngenome::create_context(userConfig.genetic_config, simulator);
-
     experiment.loop.GenerateRandomSpawnLocation(userConfig.genetic_config.n_trials);
+
+
+    auto logger = PerformanceLogger("statistics/", "task1_" + PerformanceLogger::statisticsBasenameFromConfiguration(userConfig));
 
     GA1DBinaryStringGenome genome(userConfig.genetic_config.genome_size);
     GeneticBuilder<GA1DBinaryStringGenome> evaluator(
             genome,
             bngenome::initializer(rnd, (float) userConfig.controller_config.bias),
-            bngenome::evaluator(experiment)
+            bngenome::evaluatorByExperiment(experiment)
     );
 
     auto iterator = evaluator.maximize()
@@ -42,29 +43,10 @@ int main(){
             << " Best fitness " << result.population->best().fitness()
             << endl;
 
-        saveIntoLog(result.population);
+        logger.saveStatistics(*result.population);
     }
 
     simulator.Destroy();
 
     return 0;
-}
-
-
-void saveIntoLog(const GAPopulation* population) {
-    static double best_score = 0;
-    static GAGenome* best_genome = nullptr;
-
-    cout << "Saving population info " << endl;
-    for(int i = 0; i < population->size(); i++) {
-        auto& individual = population->individual(i);
-
-        cout << "Genome " << individual << endl;
-        if(individual.score() > best_score) {
-            best_genome = &individual;
-            best_score = best_genome->score();
-            cout << "Best score: " << best_score << " booleans: " << *best_genome << endl;
-            //logger.saveGenomeAsBest(*best_genome);
-        }
-    }
 }

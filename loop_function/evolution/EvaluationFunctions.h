@@ -27,6 +27,21 @@ namespace evaluation {
         };
     }
 
+    // triangular function https://it.wikipedia.org/wiki/Distribuzione_triangolare
+    inline std::function<double(double)> triangular(double a, double b) {
+        double c = (b - a) / 2;
+        double center = 2 / (b - a);
+        return [a, b, c, center](double x) {
+            if(x >= a && x < c) {
+                return center * ((x - a) / (c - a));
+            } else if(x > c && x <= b) {
+                return center * ((b - x) / (b - c));
+            } else {
+                return center;
+            }
+        };
+    }
+
     /**
      * The max of one circle
      **/

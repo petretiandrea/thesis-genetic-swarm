@@ -5,7 +5,7 @@
 #include "ParallelEvalutator.h"
 
 #include <argos3/core/simulator/simulator.h>
-#include <loop_function/evolution/evolution_loop.h>
+#include <loop_function/evolution/BaseLoop.h>
 #include <genetic/core/BNGenome.h>
 #include <csignal>
 #include <utility/Utility.h>
@@ -22,7 +22,7 @@ ParallelEvaluator::ParallelEvaluator(const config::ExperimentConfiguration& conf
                                      const char* argosExperimentFilename,
                                      int parallelism) :
     xmlExperiment(config::load_experiment_config(argosExperimentFilename, configuration)),
-    memory(configuration.genetic_config.population_size, parallelism),
+    memory(configuration.genetic_config.population_size, configuration.genetic_config.genome_size, parallelism),
     workers(memory, parallelism),
     parallelism(parallelism) {
 
@@ -49,29 +49,22 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
         auto& boolGenome = dynamic_cast<GA1DBinaryStringGenome&>(population.individual(i));
         auto actualScore = EvaluatedHack::isEvaluated(&boolGenome) ? boolGenome.score() : -1;
 
+        //cout << "Genome " << boolGenome << endl;
+
         if (actualScore == -1) {
-            short genomeArray[boolGenome.size()];
+            //cout << "Genome to evaluate " << boolGenome << endl;
+            short* genomeArray = new short[boolGenome.size()];
             genomeToShortArray(boolGenome, genomeArray);
             //TODO: check if is already evaluated
+            //cout << "Sending " << boolGenome << endl;
             this->memory.putGenome(memoryIndex, genomeArray, boolGenome.size(), actualScore, -1);
             memoryIndex++;
             needEvaluation.push_back(i);
+            delete[] genomeArray;
         }
-
-        // debug print
-        /*cout << "Bool " << boolGenome << endl;
-        std::vector<short> w;
-        w.assign(genomeArray, genomeArray + boolGenome.size());
-        cout << "Short " << w << endl;*/
-
-
-        //auto* evalData = dynamic_cast<bngenome::CustomEvalData*>(boolGenome.evalData());
-        /*if(evalData == NULL) {
-            boolGenome.evalData(bngenome::CustomEvalData());
-            evalData = dynamic_cast<bngenome::CustomEvalData*>(boolGenome.evalData());
-        }*/
     }
 
+    //cout << "Nedd eval " << needEvaluation.size() << endl;
     prepareTaskSlave(needEvaluation.size());
     workers.resumeSlaves();
     workers.waitSlaves();
@@ -83,9 +76,6 @@ void ParallelEvaluator::evaluatePopulation(GAPopulation &population) {
 
         auto& slaveData = memory.getGenome(i);
         boolGenome.score((float) slaveData.fitness);
-
-        //cout << "Slave data " << (float) slaveData.fitness << endl;
-        //((bngenome::CustomEvalData*) boolGenome.evalData())->robotCount = robotCount;
     }
 }
 
@@ -147,8 +137,10 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
 
            bool needEvaluation = shared.fitness == -1;
            if(needEvaluation) {
-               auto performance = bngenome::evaluator(experiment)(genome);
+               //cout << "Testing " << genome << endl;
+               auto performance = bngenome::evaluatorByExperiment(experiment)(genome);
                //auto robotCount = ((bngenome::CustomEvalData*) genome.evalData())->robotCount;
+               //cout << "Perf: " << performance << endl;
                memory.updateGenomeEvaluation(i, performance, 0);
            }
        }
@@ -156,4 +148,10 @@ void ParallelEvaluator::prepareTaskSlave(int genomeCount) {
        LOG.Flush();
        LOGERR.Flush();
    }
+}
+
+std::function<double(GA1DBinaryStringGenome &)> ParallelEvaluator::genomeEvaluator() {
+    return [](GA1DBinaryStringGenome & genome) {
+      return genome.score();
+    };
 }

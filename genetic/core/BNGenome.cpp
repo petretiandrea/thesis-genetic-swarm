@@ -18,7 +18,7 @@ GenomeInitializer<GA1DBinaryStringGenome&> bngenome::initializer(rnd::Random& rn
     };
 }
 
-GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluator(GeneticExperimentContext& experiment) {
+GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluatorByExperiment(GeneticExperimentContext& experiment) {
     return [&experiment](GA1DBinaryStringGenome& genome) {
 
         double performance = 0;
@@ -31,8 +31,7 @@ GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluator(GeneticExperimentCo
             experiment.simulator.Reset();
             experiment.simulator.Execute();
 
-            performance += experiment.loop.CalculateEvaluation();
-            robotCount += experiment.loop.MaxRobotCount();
+            performance += experiment.loop.Evaluate();
         }
 
         // TODO: add robot count to associated result

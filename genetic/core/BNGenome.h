@@ -9,7 +9,7 @@
 #include <ga/ga.h>
 #include <functional>
 #include <utility>
-#include <loop_function/evolution/evolution_loop.h>
+#include <loop_function/evolution/BaseLoop.h>
 #include <galib-wrapper/GeneticBuilder.h>
 
 using namespace std;
@@ -19,19 +19,19 @@ namespace bngenome {
     struct GeneticExperimentContext {
         const config::GeneticConfiguration& configuration;
         argos::CSimulator& simulator;
-        EvolutionLoop& loop;
+        BaseLoop& loop;
     };
 
     inline GeneticExperimentContext create_context(const config::GeneticConfiguration& config, argos::CSimulator& simulator) {
         return {
             .configuration = config,
             .simulator = simulator,
-            .loop = dynamic_cast<EvolutionLoop&>(simulator.GetLoopFunctions())
+            .loop = dynamic_cast<BaseLoop&>(simulator.GetLoopFunctions())
         };
     }
 
     GenomeInitializer<GA1DBinaryStringGenome&> initializer(rnd::Random& rnd, float bias);
-    GenomeEvaluator<GA1DBinaryStringGenome> evaluator(GeneticExperimentContext& experiment);
+    GenomeEvaluator<GA1DBinaryStringGenome> evaluatorByExperiment(GeneticExperimentContext& experiment);
     vector<bool> toVector(const GA1DBinaryStringGenome& genome);
 }
 

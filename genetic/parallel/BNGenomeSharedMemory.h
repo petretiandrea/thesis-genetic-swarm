@@ -25,20 +25,17 @@ struct SharedBinaryGenome {
     float fitness;
     float robot_count;
 
-    explicit SharedBinaryGenome(shortallocator alloc) : genome(nullptr), genomeSize(0), fitness(-1), robot_count(-1) { }
+    explicit SharedBinaryGenome() : genome(nullptr), genomeSize(0), fitness(-1), robot_count(-1) { }
+    explicit SharedBinaryGenome(shortallocator alloc, int genomeSize) : genome(alloc.allocate(genomeSize).get()), genomeSize(0), fitness(-1), robot_count(-1) { }
 
-    SharedBinaryGenome(short* genome, int genomeSize, float fitness, float robot_count, shortallocator alloc) :
+    /*SharedBinaryGenome(short* genome, int genomeSize, float fitness, float robot_count, shortallocator alloc) :
             genome(alloc.allocate(genomeSize).get()),
             genomeSize(genomeSize),
             fitness(fitness),
             robot_count(robot_count) {
 
-        std::copy(genome, genome + genomeSize, this->genome);
-    }
 
-    inline void copyArray(short array1[], short array2[], int n) {
-
-    }
+    }*/
 };
 
 namespace shared {
@@ -63,6 +60,13 @@ private:
         ~shm_remove(){ inter::shared_memory_object::remove(SHARED_MEM_NAME); }
     } remover;
 
+    static unsigned long calculate_mem(int individuals, int genomeSize, int workers) {
+        auto total = (sizeof(SharedBinaryGenome) * individuals) +
+                 (sizeof(short) * genomeSize * individuals) +
+                 sizeof(int) * 2 * workers;
+
+        return (unsigned long) total + (0.33 * total);
+    }
 
 private:
     shared::segment segment;
@@ -70,17 +74,23 @@ private:
     int* workSlices;
 
 public:
-    BNGenomeSharedMemory(int genomes, int workers) :
+    BNGenomeSharedMemory(int genomes, int genomeSize, int workers) :
         genomes(nullptr),
-        segment(inter::open_or_create, SHARED_MEM_NAME, 65536)
+        segment(inter::open_or_create, SHARED_MEM_NAME, calculate_mem(genomes, genomeSize, workers))
     {
-        this->genomes = segment.find_or_construct<shared::BinaryGenome>("genomes")[genomes](shared::BinaryGenome(segment.get_segment_manager()));
+        this->genomes = segment.find_or_construct<shared::BinaryGenome>("genomes")[genomes](shared::BinaryGenome());
         this->workSlices = segment.find_or_construct<int>("work_slices")[workers * 2](0);
+        std:: cout << "Free shared memory " << segment.get_free_memory() << std::endl;
     }
 
     void putGenome(int index, short* genome, int genomeSize, float fitness, float robotCount) {
-        auto data = shared::BinaryGenome { genome, genomeSize, fitness, robotCount, segment.get_segment_manager() };
-        this->genomes[index] = data;
+        if(this->genomes[index].genome == nullptr) {
+            this->genomes[index] = shared::BinaryGenome(segment.get_segment_manager(), genomeSize);
+        }
+        this->genomes[index].fitness = fitness;
+        this->genomes[index].robot_count = robotCount;
+        this->genomes[index].genomeSize = genomeSize;
+        std::copy(genome, genome + genomeSize, this->genomes[index].genome);
     }
 
     void updateGenomeEvaluation(int index, float fitness, float robotCount) {
@@ -93,13 +103,13 @@ public:
     }
 
     void putWorkSlice(int index, int from, int size) {
-        this->workSlices[index] = from;
-        this->workSlices[index + 1] = size;
+        this->workSlices[index * 2] = from;
+        this->workSlices[(index * 2) + 1] = size;
     }
 
     void getWorkSlice(int index, int* from, int* size) {
-        *from = this->workSlices[index];
-        *size = this->workSlices[index + 1];
+        *from = this->workSlices[index * 2];
+        *size = this->workSlices[(index * 2) + 1];
     }
 };
 

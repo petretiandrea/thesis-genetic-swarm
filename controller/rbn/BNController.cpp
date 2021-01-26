@@ -6,6 +6,7 @@
 #include "BNController.h"
 #include "Footbot.h"
 #include <core/configuration/config.h>
+#include <core/BooleanNetworkSerializer.h>
 
 #define INPUT_NODE 12
 #define OUTPUT_NODE 2
@@ -30,19 +31,27 @@ void BNController::Init(TConfigurationNode &t_node) {
     constantOutputSpeed = t_node.GetAttribute<double>(config::key::CONSTANT_SPEED);
 
     auto network_file = t_node.GetAttribute(config::key::BOOLEAN_NETWORK_FILE);
+
+    booleanNetwork = new BooleanNetwork(
+            t_node.GetAttribute<int>(config::key::NODES),
+            t_node.GetAttribute<int>(config::key::INPUT_FOR_NODE),
+            t_node.GetAttribute<double>(config::key::BIAS),
+            INPUT_NODE,
+            OUTPUT_NODE,
+            constants::RANDOM_SEED);
+
     if(!network_file.empty()) {
         LoadFromFile(network_file);// TODO: load entire network, including structure
-    } else {
-        booleanNetwork = new BooleanNetwork(
-                t_node.GetAttribute<int>(config::key::NODES),
-                t_node.GetAttribute<int>(config::key::INPUT_FOR_NODE),
-                t_node.GetAttribute<double>(config::key::BIAS),
-                INPUT_NODE,
-                OUTPUT_NODE,
-                constants::RANDOM_SEED);
     }
 }
+
 #include <utility/Utility.h>
+
+void BNController::LoadFromFile(const string &filename) {
+    auto booleanFunctions = BooleanNetworkSerializer::fromStatisticFile(filename);
+    booleanNetwork->changeBooleanFunction(booleanFunctions);
+}
+
 void BNController::ControlStep() {
     auto proximityValues = footboot::readProximityValues(*proximity, 8);
     auto groundValues = footboot::readMotorGroundValues(*motorGround);

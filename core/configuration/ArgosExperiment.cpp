@@ -22,7 +22,7 @@ ticpp::Document config::load_experiment_config(const char* experiment_filename, 
 
     // inject config to loop function
     auto loop_fun = argos::GetNode(root, "loop_functions");
-    if(loop_fun.GetAttribute("label") == "evolution_loop") {
+    if(loop_fun.GetAttribute("label").find("loop_task") != std::string::npos) {
         loop_fun.SetAttribute(KEY_FOOTBOT_NUMBER, config.footbot_size);
     }
 
