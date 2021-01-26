@@ -31,8 +31,8 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="./build/loop_function/evolution/libevolution_loop"
-                  label="evolution_loop"/>
+  <loop_functions library="./build/loop_function/evolution/libloop_functions"
+                  label="loop_task3"/>
 
 
 

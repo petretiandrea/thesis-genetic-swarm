@@ -10,7 +10,7 @@ add_library(genetic_core SHARED
 target_link_libraries(
         genetic_core
         utility
-        evolution_loop
+        loop_functions
         galib_wrapper
         ${GALIB_LIBRARIES}
 )

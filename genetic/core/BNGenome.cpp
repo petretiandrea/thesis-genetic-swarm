@@ -31,8 +31,7 @@ GenomeEvaluator<GA1DBinaryStringGenome&> bngenome::evaluatorByExperiment(Genetic
             experiment.simulator.Reset();
             experiment.simulator.Execute();
 
-            performance += experiment.loop.CalculateEvaluation();
-            robotCount += experiment.loop.MaxRobotCount();
+            performance += experiment.loop.Evaluate();
         }
 
         // TODO: add robot count to associated result

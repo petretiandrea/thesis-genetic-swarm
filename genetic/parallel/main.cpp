@@ -11,11 +11,12 @@
 #include <genetic/core/PerformanceLogger.h>
 #include <genetic/test/testing.h>
 #include <utility/Utility.h>
+#include <constants.h>
 
-#define CONFIG_JSON "experiments/task3.json"
-#define TRAIN_EXPERIMENT "experiments/task3.argos"
+#define CONFIG_JSON "experiments/task3/config.json"
+#define TRAIN_EXPERIMENT "experiments/task3/task3.argos"
 #define TRAIN_STATISTICS_FOLDER "statistics/task3/"
-#define TEST_EXPERIMENT "experiments/task3.argos"
+#define TEST_EXPERIMENT "experiments/task3/task3.argos"
 #define TEST_RUN 30
 #define TEST_STATISTICS_FOLDER "statistics/task3/"
 
@@ -27,7 +28,7 @@ int main() {
 
     ParallelEvaluator parallel(userConfig, TRAIN_EXPERIMENT, 9);
 
-    rnd::Random rnd(123);
+    rnd::Random rnd(constants::RANDOM_SEED);
     GA1DBinaryStringGenome genome(userConfig.genetic_config.genome_size);
     GeneticBuilder<GA1DBinaryStringGenome> evaluator(genome,
             bngenome::initializer(rnd, (float) userConfig.controller_config.bias),

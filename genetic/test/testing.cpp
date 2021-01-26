@@ -3,7 +3,7 @@
 //
 
 #include "testing.h"
-#include <loop_function/evolution/evolution_loop.h>
+#include <loop_function/evolution/BaseLoop.h>
 #include <genetic/core/PerformanceLogger.h>
 #include <utility/Utility.h>
 
@@ -15,7 +15,7 @@ void testing::evaluate(const string& networkGenome,
 
     argos::CSimulator& simulator = argos::CSimulator::GetInstance();
     config::load_experiment_config(simulator, argosTestFilename.c_str(), configuration);
-    auto* loop = dynamic_cast<EvolutionLoop*>(&simulator.GetLoopFunctions());
+    auto* loop = dynamic_cast<BaseLoop*>(&simulator.GetLoopFunctions());
     loop->GenerateRandomSpawnLocation(runs);
 
     vector<double> performance;
@@ -27,7 +27,7 @@ void testing::evaluate(const string& networkGenome,
         simulator.Reset();
         simulator.Execute();
 
-        auto score = loop->CalculateEvaluation();
+        auto score = loop->Evaluate();
         performance.push_back(score);
         cout << "Performance " << score << endl;
     }
@@ -43,7 +43,7 @@ void testing::runTest(config::ExperimentConfiguration& configuration,
 
     argos::CSimulator& simulator = argos::CSimulator::GetInstance();
     config::load_experiment_config(simulator, argosTestFilename.c_str(), configuration);
-    auto* loop = dynamic_cast<EvolutionLoop*>(&simulator.GetLoopFunctions());
+    auto* loop = dynamic_cast<BaseLoop*>(&simulator.GetLoopFunctions());
     loop->GenerateRandomSpawnLocation(runs);
 
     vector<double> performance;
@@ -54,7 +54,7 @@ void testing::runTest(config::ExperimentConfiguration& configuration,
         simulator.Reset();
         simulator.Execute();
 
-        auto score = loop->CalculateEvaluation();
+        auto score = loop->Evaluate();
         performance.push_back(score);
         cout << "Performance " << score << endl;
     }

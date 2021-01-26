@@ -4,7 +4,14 @@ add_subdirectory(core)
 add_subdirectory(sequential)
 add_subdirectory(parallel)
 
-set(COMMON_DEPS rt pthread galib_wrapper utility evolution_loop genetic_core argos3core_simulator argos3plugin_simulator_entities argos3plugin_simulator_footbot ${GALIB_LIBRARIES})
+set(COMMON_DEPS rt pthread galib_wrapper
+        utility
+        loop_functions
+        genetic_core
+        argos3core_simulator
+        argos3plugin_simulator_entities
+        argos3plugin_simulator_footbot
+        ${GALIB_LIBRARIES})
 
 # testing as shared lib
 add_library(testing STATIC test/testing.h test/testing.cpp)

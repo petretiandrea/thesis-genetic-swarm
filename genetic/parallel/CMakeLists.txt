@@ -13,7 +13,7 @@ target_link_libraries(swarm_evolve_parallel
         testing
         galib_wrapper
         utility
-        evolution_loop
+        loop_functions
         genetic_core
         argos3core_simulator
         argos3plugin_simulator_entities

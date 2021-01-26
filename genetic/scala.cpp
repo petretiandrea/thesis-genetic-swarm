@@ -6,7 +6,7 @@
 #include <string>
 #include <argos3/core/simulator/simulator.h>
 #include <core/configuration/ArgosExperiment.h>
-#include <loop_function/evolution/evolution_loop.h>
+#include <loop_function/evolution/BaseLoop.h>
 #include <utility/Utility.h>
 
 using namespace std;
@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     argos::CSimulator& simulator = argos::CSimulator::GetInstance();
 
     config::load_experiment_config(simulator, argv[2], userConfig);
-    auto* loop = dynamic_cast<EvolutionLoop*>(&simulator.GetLoopFunctions());
+    auto* loop = dynamic_cast<BaseLoop*>(&simulator.GetLoopFunctions());
     loop->GenerateRandomSpawnLocation(3);
 
 
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
             simulator.Reset();
             simulator.Execute();
 
-            performance += loop->CalculateEvaluation();
+            performance += loop->Evaluate();
         }
 
         cout << (performance / trials);

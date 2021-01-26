@@ -5,7 +5,7 @@
 #include "ParallelEvalutator.h"
 
 #include <argos3/core/simulator/simulator.h>
-#include <loop_function/evolution/evolution_loop.h>
+#include <loop_function/evolution/BaseLoop.h>
 #include <genetic/core/BNGenome.h>
 #include <csignal>
 #include <utility/Utility.h>
