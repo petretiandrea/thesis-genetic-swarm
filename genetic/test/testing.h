@@ -18,10 +18,11 @@ namespace testing {
                   const string& resultFilename,
                   int runs);
 
-    void runTest(config::ExperimentConfiguration& configuration,
-                 string& argosTestFilename,
-                 string& resultFilename,
-                 int runs);
+    void evaluate(const vector<bool>& networkBooleanFunction,
+                  const config::ExperimentConfiguration& configuration,
+                  const string& argosTestFilename,
+                  const string& resultFilename,
+                  int runs);
 }
 
 #endif //SWARM_GEN_TESTING_H

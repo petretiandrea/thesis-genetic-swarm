@@ -6,7 +6,7 @@
 #include "BNController.h"
 #include "Footbot.h"
 #include <core/configuration/config.h>
-#include <core/BooleanNetworkSerializer.h>
+#include <core/BooleanNetworkLoader.h>
 
 #define INPUT_NODE 12
 #define OUTPUT_NODE 2
@@ -48,7 +48,7 @@ void BNController::Init(TConfigurationNode &t_node) {
 #include <utility/Utility.h>
 
 void BNController::LoadFromFile(const string &filename) {
-    auto booleanFunctions = BooleanNetworkSerializer::fromStatisticFile(filename);
+    auto booleanFunctions = BooleanNetworkLoader::loadBestBooleanFunctions(filename);
     booleanNetwork->changeBooleanFunction(booleanFunctions);
 }
 

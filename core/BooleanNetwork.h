@@ -74,8 +74,10 @@ public:
      */
     inline int getInputForNode() const { return connectionMatrix.getColumns(); }
 
-private:
+public:
     static Matrix<int> createRandomConnectionMatrix(rnd::Random& rnd, int totalNodes, int inputsForNode, bool selfLoop);
+
+private:
     static vector<int> extractNodeInputIndexes(rnd::Random& rnd, int nodeToLink, vector<int> nodeIndexes, int inputsForNode, bool selfLoop);
 
 

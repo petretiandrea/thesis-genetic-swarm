@@ -7,6 +7,6 @@ add_library(core SHARED
         configuration/ArgosExperiment.h
         configuration/config.h
         configuration/ArgosExperiment.cpp
-        configuration/ConfigurationJson.cpp BooleanNetworkSerializer.h)
+        configuration/ConfigurationJson.cpp BooleanNetworkLoader.h)
 
 
