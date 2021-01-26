@@ -13,17 +13,17 @@
 #include <utility/Utility.h>
 #include <constants.h>
 
-#define CONFIG_JSON "experiments/task3/config.json"
-#define TRAIN_EXPERIMENT "experiments/task3/task3.argos"
-#define TRAIN_STATISTICS_FOLDER "statistics/task3/"
-#define TEST_EXPERIMENT "experiments/task3/task3.argos"
+#define CONFIG_JSON "experiments/task4/config.json"
+#define TRAIN_EXPERIMENT "experiments/task4/task4.argos"
+#define TRAIN_STATISTICS_FOLDER "statistics/task4/"
+#define TEST_EXPERIMENT "experiments/task4/task4-test.argos"
+#define TEST_STATISTICS_FOLDER "statistics/task4/"
 #define TEST_RUN 30
-#define TEST_STATISTICS_FOLDER "statistics/task3/"
 
 int main() {
 
     auto userConfig = config::create_from_file(CONFIG_JSON);
-    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task3");
+    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task4");
     auto logger = PerformanceLogger(TRAIN_STATISTICS_FOLDER, statisticsBasename);
 
     ParallelEvaluator parallel(userConfig, TRAIN_EXPERIMENT, 9);

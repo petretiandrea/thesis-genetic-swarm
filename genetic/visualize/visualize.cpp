@@ -9,9 +9,9 @@
 int main() {
 
     static argos::CSimulator& simulator = argos::CSimulator::GetInstance();
-    static config::ExperimentConfiguration userconfig = config::create_from_file("experiments/task3/config.json");
+    static config::ExperimentConfiguration userconfig = config::create_from_file("experiments/task4/config.json");
 
-    config::load_experiment_config(simulator, "experiments/task3/task3-viz.argos", userconfig);
+    config::load_experiment_config(simulator, "experiments/task4/task4-viz.argos", userconfig);
 
     simulator.Reset();
     simulator.Execute();
