@@ -68,7 +68,7 @@ string PerformanceLogger::statisticsBasenameFromConfiguration(const config::Expe
 
 void PerformanceLogger::saveTestPerformance(const string &filename, std::vector<double>& testPerformance) {
     ofstream file;
-    file.open(filename);
+    file.open(filename + ".csv");
     file << "trial;score" << endl << flush;
     for(int i = 0; i < testPerformance.size(); i++) {
         file << i << ";" << testPerformance[i] << endl << flush;
