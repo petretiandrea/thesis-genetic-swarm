@@ -95,6 +95,15 @@ std::vector<bool> BooleanNetwork::getOutputValues() {
     return output;
 }
 
+vector<bool> BooleanNetwork::getInputValues() {
+    std::vector<bool> input(getInputNodes().size());
+    for(int i = 0; i < input.size(); i++) {
+        input[i] = states[inputNodes[i]];
+    }
+    return input;
+}
+
+
 Matrix<int> BooleanNetwork::createRandomConnectionMatrix(rnd::Random& rnd, int totalNodes, int inputsForNode, bool selfLoop) {
     Matrix<int> connectionMatrix(totalNodes, inputsForNode);
     vector<int> nodes = boost::copy_range<vector<int>>(boost::irange(0, totalNodes));

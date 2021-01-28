@@ -18,6 +18,9 @@ struct SInitSetup {
     CQuaternion Orientation;
 };
 
+typedef vector<bool> InputTuple;
+typedef string RobotID;
+
 using namespace argos;
 using namespace std;
 
@@ -42,6 +45,12 @@ public:
 
     void GenerateRandomSpawnLocation(int nTrials);
 
+    void EnableComplexityMeasures();
+
+    inline map<RobotID , vector<InputTuple>> GetComplexityMeasures() { return inputTuples; }
+
+    void PostStep() override;
+
 private:
     vector<SInitSetup> ComputeSpawnLocations(int nTrial, const Rect& spawnArea);
     CVector3 GenerateLocationWithoutCollision(int maxAttempts, const std::vector<SInitSetup>& botLocations, const Rect& spawnArea);
@@ -62,6 +71,8 @@ protected:
     vector<Circle> blackCircles;
     Rect spawnArea;
     int currentTrial;
+    bool collectComplexityMeasures = false;
+    map<string, vector<vector<bool>>> inputTuples;
 };
 
 #endif //SWARM_GEN_BASELOOP_H
