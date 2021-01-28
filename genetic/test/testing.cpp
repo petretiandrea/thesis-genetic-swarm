@@ -15,7 +15,7 @@ void testing::evaluate(const string& networkGenome,
 
     evaluate(utility::boolVectorFromString(networkGenome), configuration, argosTestFilename, resultFilename, runs);
 }
-
+#include <chrono>
 void testing::evaluate(const vector<bool>& networkBooleanFunction,
                        const config::ExperimentConfiguration& configuration,
                        const string& argosTestFilename,
@@ -31,6 +31,8 @@ void testing::evaluate(const vector<bool>& networkBooleanFunction,
 
     loop->ConfigureFromGenome(networkBooleanFunction);
     for(int i = 0; i < runs; i++) {
+
+        auto t1 = std::chrono::high_resolution_clock::now();
         loop->PrepareForTrial(i);
         simulator.Reset();
         simulator.Reset();
@@ -39,6 +41,10 @@ void testing::evaluate(const vector<bool>& networkBooleanFunction,
         auto score = loop->Evaluate();
         performance.push_back(score);
         cout << "Performance " << score << endl;
+        auto t2 = std::chrono::high_resolution_clock::now();
+
+        cout << "Time " << std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count() << endl;
+
     }
     simulator.Destroy();
 

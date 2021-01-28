@@ -1,12 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 project(swarm_gen)
 
+find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
+SET(CMAKE_C_COMPILER mpicc)
+SET(CMAKE_CXX_COMPILER mpicxx)
+
 set(CMAKE_CXX_STANDARD 17)
 
 # Set the path where CMake will find additional scripts
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-find_package(Boost 1.75.0 COMPONENTS date_time json)
+find_package(Boost 1.75.0 COMPONENTS date_time json mpi)
 if(BOOST_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
     link_directories(${Boost_LIBRARIES})
