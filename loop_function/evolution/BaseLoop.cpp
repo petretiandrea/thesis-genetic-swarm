@@ -13,7 +13,9 @@
 BaseLoop::BaseLoop() :
     initialSpawnLocations(),
     rnd(nullptr),
-    currentTrial(0) { }
+    currentTrial(0),
+    inputTuples(),
+    motorMeasures() { }
 
 BaseLoop::~BaseLoop() = default;
 
@@ -90,6 +92,8 @@ void BaseLoop::Reset() {
             //std::cerr << "Error for bot: " << bot->GetId() << " on trial: " << currentTrial << " reason: " << " cannot move entity " << std::endl;
         }
     }
+    inputTuples.clear();
+    motorMeasures.clear();
 }
 
 // Spawning methods
@@ -177,6 +181,24 @@ bool BaseLoop::CheckCollision(CVector3& position, const std::vector<SInitSetup>&
     auto spawnLocation = CVector2(position.GetX(), position.GetY());
     if(forbiddenSpawn(spawnLocation)) return true;
     return false;
+}
+
+void BaseLoop::PostStep() {
+    CLoopFunctions::PostStep();
+    if(!collectComplexityMeasures) return;
+
+    // enabled complexity measure collecting
+    for(auto* controller : controllers) {
+        inputTuples[controller->GetId()].push_back(controller->getLastInputTuple());
+        motorMeasures[controller->GetId()].push_back(controller->getLastOutputTupleValue());
+    }
+}
+
+void BaseLoop::EnableComplexityMeasures() {
+    collectComplexityMeasures = true;
+    for (auto* controller : controllers) {
+        controller->enableComplexityMeasurement();
+    }
 }
 
 

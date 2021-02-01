@@ -25,4 +25,8 @@ vector<bool> utility::generateBinaryVector(int size, rnd::Random& rnd, float bia
 }
 
 
+int utility::boolVectorToInt(const vector<bool>& values) {
+    return std::accumulate(values.begin(), values.end(), 0, [](int x, int y) { return (x << 1) + y; });
+}
+
 int utility::boolToInt(bool value, bool invert) { return invert ? (!value ? 1 : 0) : (value ? 1 : 0); }

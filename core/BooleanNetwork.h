@@ -31,6 +31,8 @@ public:
     /** It compute one step of network. */
     void update();
 
+    vector<bool> getInputValues();
+
     /** Get the values of output nodes. */
     vector<bool> getOutputValues();
 

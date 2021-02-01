@@ -7,11 +7,12 @@
 #include "Footbot.h"
 #include <core/configuration/config.h>
 #include <core/BooleanNetworkLoader.h>
+#include <utility/Utility.h>
 
 #define INPUT_NODE 12
 #define OUTPUT_NODE 2
 
-BNController::BNController() : wheels(nullptr), proximity(nullptr), motorGround(nullptr), booleanNetwork(nullptr) {}
+BNController::BNController() : wheels(nullptr), proximity(nullptr), motorGround(nullptr), booleanNetwork(nullptr), lastInputTuple(), lastMotorOutput(-1) {}
 
 BNController::~BNController() {
     delete booleanNetwork;
@@ -68,12 +69,21 @@ void BNController::ControlStep() {
     }
 
     booleanNetwork->update();
+
+    if(complexityMeasureEnabled) {
+        lastInputTuple.clear();
+        lastInputTuple.insert(lastInputTuple.end(), proximityBooleans.begin(), proximityBooleans.end());
+        lastInputTuple.insert(lastInputTuple.end(), groundBooleans.begin(), groundBooleans.end());
+        lastMotorOutput = utility::boolVectorToInt(booleanNetwork->getOutputValues());
+    }
+
     footboot::moveByBooleans(*wheels, booleanNetwork->getOutputValues(), this->constantOutputSpeed);
 }
 
 void BNController::Reset() {
     CCI_Controller::Reset();
     booleanNetwork->resetStates();
+    lastInputTuple.clear();
 }
 
 void BNController::Destroy() { }

@@ -32,6 +32,7 @@
             <excludedPath local="true" path="$PROJECT_DIR$/build" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
             <excludedPath local="true" path="$PROJECT_DIR$/build" />
+            <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/collected-data" />
           </excludedPaths>
         </serverdata>
       </paths>
