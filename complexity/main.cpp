@@ -37,13 +37,12 @@ std::function<bool(const Solution&)> targetGeneration(int generation);
 struct ComplexityData {
     int trial;
     double fitness;
-    map<RobotID, double> entropies;
+    map<RobotID, vector<vector<bool>>> sensorTuples;
+    map<RobotID, vector<int>> motorTuples;
 };
 
 void evaluate_and_dump(vector<Solution>& solutions, argos::CSimulator& simulator, BaseLoop& loop, int trials, const string& basename);
-vector<pair<Solution, vector<ComplexityData>>> evaluate_solutions(vector<Solution>& solutions, argos::CSimulator& simulator, BaseLoop& loop, int trials);
 vector<ComplexityData> evaluate_solution(Solution& solution, argos::CSimulator& simulator, BaseLoop& loop, int trials);
-
 
 int main() {
 
@@ -94,39 +93,26 @@ void evaluate_and_dump(vector<Solution>& solutions,
                        int trials,
                        const string& basename) {
 
-    auto results = evaluate_solutions(solutions, simulator, loop, trials);
-
-    for(int i = 0; i < results.size(); i++) {
+    for(int i = 0; i < solutions.size(); i++) {
         ofstream oo(basename + "_" + to_string(i) + ".csv");
-        oo << "solution_fitness;trial;fitness;bot_id;entropy" << flush << endl;
+        oo << "solution_fitness;trial;fitness;bot_id;sensor_tuples;motor_value" << flush << endl;
 
-        auto& solutionsResult = results[i];
-        for(auto& result : solutionsResult.second) {
-            for(auto& entropy : result.entropies) {
-                oo << solutionsResult.first.fitness << ";"
+        auto results = evaluate_solution(solutions[i], simulator, loop, trials);
+
+        for(auto& result : results) {
+            for(auto& entropy : result.sensorTuples) {
+                auto robot_id = entropy.first;
+                oo << solutions[i].fitness << ";"
                    << result.trial << ";"
                    << result.fitness << ";"
-                   << entropy.first << ";"
-                   << std::scientific << entropy.second << flush << endl;
+                   << robot_id << ";"
+                   << result.sensorTuples[robot_id] << ";"
+                   << result.motorTuples[robot_id] << flush << endl;
             }
         }
 
         oo.close();
     }
-}
-
-vector<pair<Solution, vector<ComplexityData>>> evaluate_solutions(vector<Solution>& solutions,
-                                           argos::CSimulator& simulator,
-                                           BaseLoop& loop,
-                                           int trials) {
-    vector<pair<Solution, vector<ComplexityData>>> results;
-
-    for(auto& solution : solutions) {
-        auto result = evaluate_solution(solution, simulator, loop, trials);
-        results.push_back(pair<Solution, vector<ComplexityData>>(solution, result));
-    }
-
-    return results;
 }
 
 vector<ComplexityData> evaluate_solution(Solution& solution, argos::CSimulator& simulator, BaseLoop& loop, int trials) {
@@ -141,12 +127,17 @@ vector<ComplexityData> evaluate_solution(Solution& solution, argos::CSimulator& 
         simulator.Reset();
         simulator.Execute();
 
-        ComplexityData data { .trial = trial, .fitness = loop.Evaluate() };
+        ComplexityData data {
+            .trial = trial,
+            .fitness = loop.Evaluate(),
+            .sensorTuples = loop.GetComplexityMeasures(),
+            .motorTuples = loop.GetMotorMeasures()
+        };
 
-        auto robotResults = loop.GetComplexityMeasures();
+        /*auto robotResults = loop.GetComplexityMeasures();
         for(auto& robot : robotResults) {
             data.entropies[robot.first] = complexity::shannon2(robot.second);
-        }
+        }*/
 
         results.push_back(data);
     }
@@ -176,4 +167,3 @@ std::function<bool(const Solution&)> targetGeneration(int generation) {
         return sol.generation == generation;
     };
 }
-

@@ -29,6 +29,7 @@ public:
     inline void enableComplexityMeasurement() { complexityMeasureEnabled = true; }
 
     inline vector<bool> getLastInputTuple() { return lastInputTuple; }
+    inline int getLastOutputTupleValue() { return lastMotorOutput; }
 private:
     void LoadFromFile(const string& filename);
 
@@ -44,6 +45,7 @@ private:
 
     bool complexityMeasureEnabled = false;
     vector<bool> lastInputTuple;
+    int lastMotorOutput;
 };
 
 #endif //SWARM_GEN_BNCONTROLLER_H

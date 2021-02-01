@@ -17,6 +17,8 @@ namespace utility {
     vector<bool> boolVectorFromString(const string& string);
     int boolToInt(bool value, bool invert = false);
 
+    int boolVectorToInt(const vector<bool>& values);
+
     template<typename T> static Matrix<T> vectorToMatrix(const vector<T>& vector, int row, int column) {
         if(row * column > vector.size()) throw std::invalid_argument("vector size must be enough for row x column matrix");
         if(row * column < vector.size()) std::cout << "Warn: some element of vector where dropped" << std::endl;
@@ -51,9 +53,13 @@ namespace utility {
     }
 }
 
-template <class T> std::ostream& operator<<(std::ostream &flux, const vector<T>& v) {
-    for(auto elem : v) { flux << elem << " "; }
-    return flux;
+template<typename T> std::ostream& operator<<(std::ostream& os, const vector<T>& vector) {
+    os << "[";
+    for(int i = 0; i < vector.size() - 1; i++) {
+        os << vector[i] << ", ";
+    }
+    os << vector[vector.size() - 1] << "]";
+    return os;
 }
 
 #endif //SWARM_GEN_UTILITY_H

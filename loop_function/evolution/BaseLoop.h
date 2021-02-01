@@ -49,6 +49,8 @@ public:
 
     inline map<RobotID , vector<InputTuple>> GetComplexityMeasures() { return inputTuples; }
 
+    inline map<RobotID, vector<int>> GetMotorMeasures() { return motorMeasures; }
+
     void PostStep() override;
 
 private:
@@ -73,6 +75,7 @@ protected:
     int currentTrial;
     bool collectComplexityMeasures = false;
     map<string, vector<vector<bool>>> inputTuples;
+    map<string, vector<int>> motorMeasures;
 };
 
 #endif //SWARM_GEN_BASELOOP_H

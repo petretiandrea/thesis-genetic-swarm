@@ -14,7 +14,8 @@ BaseLoop::BaseLoop() :
     initialSpawnLocations(),
     rnd(nullptr),
     currentTrial(0),
-    inputTuples() { }
+    inputTuples(),
+    motorMeasures() { }
 
 BaseLoop::~BaseLoop() = default;
 
@@ -92,6 +93,7 @@ void BaseLoop::Reset() {
         }
     }
     inputTuples.clear();
+    motorMeasures.clear();
 }
 
 // Spawning methods
@@ -188,6 +190,7 @@ void BaseLoop::PostStep() {
     // enabled complexity measure collecting
     for(auto* controller : controllers) {
         inputTuples[controller->GetId()].push_back(controller->getLastInputTuple());
+        motorMeasures[controller->GetId()].push_back(controller->getLastOutputTupleValue());
     }
 }
 
