@@ -20,11 +20,11 @@
 #include "MPIEvaluator.h"
 
 
-#define CONFIG_JSON "experiments/task4/config.json"
-#define TRAIN_EXPERIMENT "experiments/task4/task4.argos"
-#define TRAIN_STATISTICS_FOLDER "statistics/task4/"
-#define TEST_EXPERIMENT "experiments/task4/task4-test.argos"
-#define TEST_STATISTICS_FOLDER "statistics/task4/"
+#define CONFIG_JSON "experiments/task2/config.json"
+#define TRAIN_EXPERIMENT "experiments/task2/task2.argos"
+#define TRAIN_STATISTICS_FOLDER "statistics/task2/"
+#define TEST_EXPERIMENT "experiments/task2/task2-test.argos"
+#define TEST_STATISTICS_FOLDER "statistics/task2/"
 #define TEST_RUN 30
 
 using namespace std;
@@ -37,7 +37,7 @@ int main()
 
 
     auto userConfig = config::create_from_file(CONFIG_JSON);
-    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task4");
+    static auto statisticsBasename = PerformanceLogger::statisticsBasenameFromConfiguration(userConfig, "task1");
     auto logger = PerformanceLogger(TRAIN_STATISTICS_FOLDER, statisticsBasename);
 
     MPIEvaluator eval(world);

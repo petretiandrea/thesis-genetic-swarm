@@ -19,8 +19,8 @@
 #include <loop_function/evolution/BaseLoop.h>
 #include <iostream>
 
-#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task1/task1_"
-#define GENERATIONS_FILENAME "statistics/task1/task1_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_10-41_20-01.csv"
+#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task1/task1_bis_"
+#define GENERATIONS_FILENAME "statistics/task1/task1_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_22-30_28-01.csv"
 #define USER_CONFIG  "experiments/task1/config.json"
 #define EXPERIMENT_FILE "experiments/task1/task1-test.argos"
 #define NETWORKS 5
@@ -55,7 +55,7 @@ int main() {
 
     // getting the worst from 0-th generation
     vector<Solution> lastGen;
-    boost::copy(*booleanFunctions | filtered(targetGeneration(1)), back_inserter(worst));
+    boost::copy(*booleanFunctions | filtered(targetGeneration(0)), back_inserter(worst));
     boost::copy(*booleanFunctions | filtered(targetGeneration(100)), back_inserter(lastGen));
 
     worst = distinct(worst);
@@ -70,7 +70,7 @@ int main() {
     // getting: first n-th worst, first n best, last 5 of last generation
     vector<Solution>(worst.begin(), worst.begin() + NETWORKS).swap(worst);
     vector<Solution>(lastGen.begin(), lastGen.begin() + NETWORKS).swap(best);
-    vector<Solution>(make_reverse_iterator(lastGen.end()),make_reverse_iterator(lastGen.end() - NETWORKS)).swap(middle);
+    vector<Solution>(lastGen.end() - NETWORKS, lastGen.end()).swap(middle);
 
     // create argos simulator
     argos::CSimulator& simulator = argos::CSimulator::GetInstance();
