@@ -19,10 +19,10 @@
 #include <loop_function/evolution/BaseLoop.h>
 #include <iostream>
 
-#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task1/task1_bis_"
-#define GENERATIONS_FILENAME "statistics/task1/task1_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_22-30_28-01.csv"
-#define USER_CONFIG  "experiments/task1/config.json"
-#define EXPERIMENT_FILE "experiments/task1/task1-test.argos"
+#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task2/task2_"
+#define GENERATIONS_FILENAME "statistics/task2/task2_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_11-15_29-01.csv"
+#define USER_CONFIG  "experiments/task2/config.json"
+#define EXPERIMENT_FILE "experiments/task2/task2-test.argos"
 #define NETWORKS 5
 #define TRIALS 10
 
