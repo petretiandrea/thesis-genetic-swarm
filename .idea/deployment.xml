@@ -29,10 +29,14 @@
             <mapping deploy="/home/argos/swarm-gen-new" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/venv" />
             <excludedPath local="true" path="$PROJECT_DIR$/build" />
+            <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/.ipynb_checkpoints" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
-            <excludedPath local="true" path="$PROJECT_DIR$/build" />
             <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/collected-data" />
+            <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/.ipynb_checkpoints" />
+            <excludedPath local="true" path="$PROJECT_DIR$/build" />
+            <excludedPath local="true" path="$PROJECT_DIR$/analysis-visualization/venv" />
           </excludedPaths>
         </serverdata>
       </paths>

@@ -9,6 +9,7 @@
 #include <boost/range/adaptor/filtered.hpp>
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/assign.hpp>
+#include <utility>
 #include <vector>
 #include <core/SolutionLoader.h>
 #include <boost/unordered_set.hpp>
@@ -19,12 +20,12 @@
 #include <loop_function/evolution/BaseLoop.h>
 #include <iostream>
 
-#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task2/task2_"
-#define GENERATIONS_FILENAME "statistics/task2/task2_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_11-15_29-01.csv"
-#define USER_CONFIG  "experiments/task2/config.json"
-#define EXPERIMENT_FILE "experiments/task2/task2-test.argos"
+#define COMPLEXITY_STATISTICS_BASENAME "statistics/complexity/task3/task3_30_f_"
+#define GENERATIONS_FILENAME "statistics/task3/task3_nodes50_k3_bias0.21_prox1.5_p80_g100_pM0.01_pC0_el5_trials3_10-17_23-01.csv"
+#define USER_CONFIG  "experiments/task3/config.json"
+#define EXPERIMENT_FILE "experiments/task3/task3-test.argos"
 #define NETWORKS 5
-#define TRIALS 10
+#define TRIALS 15
 
 using namespace std;
 using namespace boost::assign;
@@ -53,23 +54,56 @@ int main() {
     auto booleanFunctions = SolutionLoader::loadSolutionsLog(GENERATIONS_FILENAME);
 
     // getting the worst from 0-th generation
-    vector<Solution> lastGen;
     boost::copy(*booleanFunctions | filtered(targetGeneration(0)), back_inserter(worst));
-    boost::copy(*booleanFunctions | filtered(targetGeneration(100)), back_inserter(lastGen));
+    boost::copy(*booleanFunctions | filtered(targetGeneration(30)), back_inserter(middle));
+    boost::copy(*booleanFunctions | filtered(targetGeneration(100)), back_inserter(best));
 
     worst = distinct(worst);
-    lastGen = distinct(lastGen);
+    middle = distinct(middle);
+    best = distinct(best);
+
+    cout << "Found " << worst.size() << " distinct worst networks" << endl;
+    cout << "Found " << middle.size() << " distinct middle networks" << endl;
+    cout << "Found " << best.size() << " distinct best networks" << endl;
 
     delete booleanFunctions;
 
     // ordering
     sort(worst.begin(), worst.end(), highestFitness);
-    sort(lastGen.begin(), lastGen.end(), highestFitness);
+    sort(middle.begin(), middle.end(), highestFitness);
+    sort(best.begin(), best.end(), highestFitness);
+
+    /*worst.erase(std::unique(worst.begin(), worst.end(), [](const Solution& sol1, const Solution& sol2) {
+        return fabs(sol1.fitness - sol2.fitness) < std::numeric_limits<double>::epsilon();
+    }), worst.end());
+
+    middle.erase(std::unique(middle.begin(), middle.end(), [](const Solution& sol1, const Solution& sol2) {
+        return fabs(sol1.fitness - sol2.fitness) < std::numeric_limits<double>::epsilon();
+    }), middle.end());
+
+    best.erase(std::unique(best.begin(), best.end(), [](const Solution& sol1, const Solution& sol2) {
+        return fabs(sol1.fitness - sol2.fitness) < std::numeric_limits<double>::epsilon();
+    }), best.end());*/
+
+    cout << best.size() <<endl;
 
     // getting: first n-th worst, first n best, last 5 of last generation
     vector<Solution>(worst.begin(), worst.begin() + NETWORKS).swap(worst);
-    vector<Solution>(lastGen.begin(), lastGen.begin() + NETWORKS).swap(best);
-    vector<Solution>(lastGen.end() - NETWORKS, lastGen.end()).swap(middle);
+    vector<Solution>(best.begin(), best.begin() + NETWORKS).swap(best);
+    vector<Solution>(middle.end() - NETWORKS, middle.end()).swap(middle);
+
+    //cout.setf(ios::scientific);
+    for(auto& net : best) {
+        cout << "Best network with " << net.fitness << " fitness " << net.solution.size() << endl;
+    }
+
+    for(auto& net : middle) {
+        cout << "Middle network with " << net.fitness << " fitness " << net.solution.size() << endl;
+    }
+
+    for(auto& net : worst) {
+        cout << "Worst network with " << net.fitness << " fitness " << net.solution.size() << endl;
+    }
 
     // create argos simulator
     argos::CSimulator& simulator = argos::CSimulator::GetInstance();
@@ -78,6 +112,8 @@ int main() {
 
     BaseLoop* loop = dynamic_cast<BaseLoop*>(&simulator.GetLoopFunctions());
     loop->GenerateRandomSpawnLocation(TRIALS);
+
+    // evaluate_solution(middle[2], simulator, *loop, 10);
 
     map<string, vector<Solution>> types = { { "best", best }, { "middle", middle }, { "worst", worst } };
     for (auto& type : types) {

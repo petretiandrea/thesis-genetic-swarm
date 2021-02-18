@@ -89,6 +89,7 @@
             <placement index="0" position="-7.5,-7.5,10" look_at="0,0,0" up="0.5,0.5,0" lens_focal_length="65"/>
             <placement index="1" position="-0.26,-10.57,11.3" look_at="-0.2681,-9.927,10.532" up="0,0.76,0.64" lens_focal_length="65"/>
             <placement index="2" position="-0.0753208,-5.51331,13.6984" look_at="-0.0762391,-5.13827,12.7714" up="-0.00226964,0.927002,0.37505" lens_focal_length="65" />
+            <placement index="3" position="-0.112958,-0.960332,14.7804" look_at="-0.113126,-0.891415,13.7827" up="-0.0024426,0.997619,0.0689168" lens_focal_length="65" />
           </placements>
         </camera>
       </qt-opengl>
